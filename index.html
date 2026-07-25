@@ -72,11 +72,19 @@
                     <span id="user-uid-display" class="font-mono text-[11px]">익명 사용자</span>
                 </div>
             </div>
+
+            <!-- Mode Switcher Button -->
+            <div class="flex items-center gap-2">
+                <button id="btn-switch-mode" class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span id="mode-btn-text">교사용 모드 전환</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Main Content Container: Student View -->
+    <main id="student-view" class="max-w-7xl mx-auto w-full px-4 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Left Column: Simulation Canvas & Graphs (7 Cols) -->
         <section class="lg:col-span-7 flex flex-col gap-6">
@@ -209,6 +217,205 @@
 
     </main>
 
+    <!-- Main Content Container: Teacher Dashboard View (Hidden by default) -->
+    <main id="teacher-view" class="max-w-7xl mx-auto w-full px-4 py-6 flex-1 hidden flex-col gap-6">
+        
+        <!-- Teacher View Banner & Navigation Tabs -->
+        <div class="glass-card rounded-2xl p-5 border border-indigo-500/30 bg-gradient-to-r from-indigo-950/50 via-slate-900/80 to-purple-950/50 flex flex-col gap-4">
+            <div class="flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">교사 전용 센터</span>
+                        <h2 class="text-xl font-bold text-indigo-100">학급 실험 관리 & 학생 지도의 공간</h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">학생들의 실시간 실험 결과를 확인하고 과제 평가 및 질문에 직접 답변할 수 있습니다.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-export-csv" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>CSV 데이터 내보내기</span>
+                    </button>
+                    <button id="btn-back-to-student" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold text-xs rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>실험실 돌아가기</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Teacher Sub-Tabs Bar -->
+            <div class="flex border-b border-slate-700/80 gap-2 pt-2">
+                <button id="tab-btn-stats" class="teacher-tab-btn active px-4 py-2 text-xs font-bold border-b-2 border-indigo-400 text-indigo-300 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>1. 학급 현황 & 데이터</span>
+                </button>
+                <button id="tab-btn-grading" class="teacher-tab-btn px-4 py-2 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-square-check"></i>
+                    <span>2. 과제 평가 & 피드백</span>
+                    <span id="unreviewed-badge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40">0</span>
+                </button>
+                <button id="tab-btn-qa" class="teacher-tab-btn px-4 py-2 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span>3. 질문 답변 게시판 관리</span>
+                    <span id="unanswered-badge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB 1: Class Stats & Data Table View -->
+        <div id="teacher-tab-stats" class="teacher-tab-content flex flex-col gap-6">
+            <!-- Metric Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">총 실험 제출 수</div>
+                        <div id="stat-total-submissions" class="text-2xl font-bold text-sky-400 mt-1">0건</div>
+                    </div>
+                    <div class="w-12 h-12 bg-sky-500/10 rounded-xl border border-sky-500/20 flex items-center justify-center text-sky-400 text-xl">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">평균 최고 온도</div>
+                        <div id="stat-avg-temp" class="text-2xl font-bold text-amber-400 mt-1">0.0 °C</div>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
+                        <i class="fa-solid fa-temperature-high"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">평균 가열 세기</div>
+                        <div id="stat-avg-power" class="text-2xl font-bold text-purple-400 mt-1">0.0x</div>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-500/10 rounded-xl border border-purple-500/20 flex items-center justify-center text-purple-400 text-xl">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 border border-slate-700/60 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">작성된 질문/노트</div>
+                        <div id="stat-total-notes" class="text-2xl font-bold text-emerald-400 mt-1">0개</div>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-500/10 rounded-xl border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Data Table -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-700/60 flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-indigo-400"></i>
+                        <h3 class="font-bold text-slate-200">실시간 학생 실험 데이터 내역</h3>
+                    </div>
+                    <span class="text-xs text-slate-400">최신순 자동 정렬</span>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                    <table class="w-full text-xs text-left text-slate-300">
+                        <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">학생 ID</th>
+                                <th scope="col" class="px-4 py-3">최고 온도 (°C)</th>
+                                <th scope="col" class="px-4 py-3">가열 세기</th>
+                                <th scope="col" class="px-4 py-3">소요 시간</th>
+                                <th scope="col" class="px-4 py-3">총 에너지 (J)</th>
+                                <th scope="col" class="px-4 py-3">평가 상태</th>
+                                <th scope="col" class="px-4 py-3">제출 시각</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-table-body" class="divide-y divide-slate-800 bg-slate-950/40">
+                            <tr>
+                                <td colspan="7" class="px-4 py-8 text-center text-slate-500">
+                                    데이터 수집 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Assignments & Feedback Management -->
+        <div id="teacher-tab-grading" class="teacher-tab-content hidden flex-col gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-700/60 flex flex-col gap-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-pen-ruler text-amber-400 text-lg"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-100 text-base">학생 제출 과제 피드백 작성</h3>
+                            <p class="text-xs text-slate-400">제출된 실험 결과에 대한 등급 도장 부여 및 선생님 격려 한마디 작성</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="grading-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="text-center text-slate-500 py-12 col-span-2">
+                        제출된 과제가 없습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Q&A Board & Teacher Reply Console -->
+        <div id="teacher-tab-qa" class="teacher-tab-content hidden flex-col gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-700/60 flex flex-col gap-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-chalkboard-user text-rose-400 text-lg"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-100 text-base">학생 질문 답변 관리</h3>
+                            <p class="text-xs text-slate-400">학생들이 게시판에 남긴 질문 및 실험 소감에 선생님 답변(답글)을 등록하세요.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="teacher-qa-list" class="space-y-4">
+                    <div class="text-center text-slate-500 py-12">
+                        등록된 질문 또는 글이 없습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal: Teacher Access PIN Dialog -->
+    <div id="teacher-pin-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="glass-card max-w-sm w-full p-6 rounded-2xl border border-indigo-500/40 shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+                    <i class="fa-solid fa-lock text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-base text-slate-100">교사 인증</h3>
+                    <p class="text-xs text-slate-400">교사 전용 대시보드 접근용 비밀번호</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs text-slate-300 font-medium">비밀번호 입력</label>
+                <input type="password" id="teacher-pin-input" placeholder="비밀번호 입력" maxlength="12"
+                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-center text-lg font-mono text-indigo-300 tracking-widest focus:outline-none focus:border-indigo-500">
+                <div id="pin-error-msg" class="text-[11px] text-rose-400 hidden">비밀번호가 올바르지 않습니다.</div>
+            </div>
+
+            <div class="flex gap-2 mt-2">
+                <button id="btn-cancel-pin" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition">
+                    취소
+                </button>
+                <button id="btn-submit-pin" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-600/30">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Modal Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
@@ -220,7 +427,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBMbw1YAJltCpUHYb8xD1pNTb5BTzuI564",
@@ -245,6 +452,36 @@
         // Local fallback data storage if Firebase Auth or Firestore is unconfigured
         const localLogs = [];
         const localNotes = [];
+        let globalAllLogs = [];
+        let globalAllNotes = [];
+        let isTeacherMode = false;
+
+        // Teacher Tab Switching
+        const tabBtns = document.querySelectorAll('.teacher-tab-btn');
+        const tabContents = document.querySelectorAll('.teacher-tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.id.replace('tab-btn-', 'teacher-tab-');
+                
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'border-indigo-400', 'text-indigo-300');
+                    b.classList.add('border-transparent', 'text-slate-400');
+                });
+                btn.classList.add('active', 'border-indigo-400', 'text-indigo-300');
+                btn.classList.remove('border-transparent', 'text-slate-400');
+
+                tabContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.remove('hidden');
+                        content.classList.add('flex');
+                    } else {
+                        content.classList.add('hidden');
+                        content.classList.remove('flex');
+                    }
+                });
+            });
+        });
 
         // Toast Notification Function
         function showToast(message, type = 'info') {
@@ -326,6 +563,9 @@
 
                 logs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 logsCount.innerText = `${logs.length}건`;
+                globalAllLogs = logs;
+
+                if (isTeacherMode) updateTeacherDashboard();
 
                 if (logs.length === 0) {
                     logsList.innerHTML = `<div class="text-center text-slate-500 py-8 text-xs">아직 저장된 실험 결과가 없습니다. 가열 후 '결과 DB 저장'을 눌러보세요!</div>`;
@@ -337,6 +577,16 @@
                     item.className = 'bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs flex flex-col gap-1.5 hover:border-slate-700 transition';
                     const timeStr = log.createdAt ? new Date(log.createdAt.seconds * 1000).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '방금 전';
                     
+                    let teacherFeedbackHtml = '';
+                    if (log.teacherFeedback) {
+                        teacherFeedbackHtml = `
+                            <div class="mt-1 pt-1.5 border-t border-slate-800 text-[11px] text-amber-300 flex items-start gap-1">
+                                <span class="font-bold text-amber-400 whitespace-nowrap">[선생님 피드백 ${log.grade || ''}]:</span>
+                                <span>${escapeHtml(log.teacherFeedback)}</span>
+                            </div>
+                        `;
+                    }
+
                     item.innerHTML = `
                         <div class="flex justify-between items-center">
                             <span class="font-bold text-sky-300">최고 온도: ${log.maxTemp?.toFixed(1) || 0}°C</span>
@@ -346,6 +596,7 @@
                             <span>소요 시간: ${log.durationSec || 0}초</span>
                             <span>가열 세기: ${log.heatPower || 1}x</span>
                         </div>
+                        ${teacherFeedbackHtml}
                     `;
                     logsList.appendChild(item);
                 });
@@ -367,6 +618,9 @@
                 });
 
                 messages.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+                globalAllNotes = messages;
+
+                if (isTeacherMode) updateTeacherDashboard();
 
                 if (messages.length === 0) {
                     chatContainer.innerHTML = `<div class="text-center text-slate-500 py-8 text-xs">관찰 소감을 남겨 첫 번째 메시지를 작성해 보세요!</div>`;
@@ -376,12 +630,25 @@
                 messages.forEach(msg => {
                     const msgDiv = document.createElement('div');
                     const isMe = msg.userId === currentUser.uid;
-                    msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+                    msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1`;
+
+                    let teacherReplyBlock = '';
+                    if (msg.teacherAnswer) {
+                        teacherReplyBlock = `
+                            <div class="mt-1 p-2 rounded-lg bg-indigo-950/80 border border-indigo-500/40 text-[11px] text-indigo-200">
+                                <div class="font-bold text-indigo-400 mb-0.5 flex items-center gap-1">
+                                    <i class="fa-solid fa-graduation-cap text-indigo-300"></i> 선생님 답변
+                                </div>
+                                ${escapeHtml(msg.teacherAnswer)}
+                            </div>
+                        `;
+                    }
 
                     msgDiv.innerHTML = `
                         <div class="text-[10px] text-slate-500 mb-0.5 px-1">${msg.userName || '익명 탐구자'}</div>
-                        <div class="px-3 py-2 rounded-xl text-xs max-w-[85%] break-all ${isMe ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'} shadow-sm">
+                        <div class="px-3 py-2 rounded-xl text-xs max-w-[90%] break-all ${isMe ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'} shadow-sm">
                             ${escapeHtml(msg.text)}
+                            ${teacherReplyBlock}
                         </div>
                     `;
                     chatContainer.appendChild(msgDiv);
@@ -410,6 +677,17 @@
             localLogs.forEach(log => {
                 const item = document.createElement('div');
                 item.className = 'bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs flex flex-col gap-1.5';
+                
+                let teacherFeedbackHtml = '';
+                if (log.teacherFeedback) {
+                    teacherFeedbackHtml = `
+                        <div class="mt-1 pt-1.5 border-t border-slate-800 text-[11px] text-amber-300 flex items-start gap-1">
+                            <span class="font-bold text-amber-400 whitespace-nowrap">[선생님 피드백 ${log.grade || ''}]:</span>
+                            <span>${escapeHtml(log.teacherFeedback)}</span>
+                        </div>
+                    `;
+                }
+
                 item.innerHTML = `
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-sky-300">최고 온도: ${log.maxTemp.toFixed(1)}°C</span>
@@ -419,9 +697,13 @@
                         <span>소요 시간: ${log.durationSec}초</span>
                         <span>가열 세기: ${log.heatPower}x</span>
                     </div>
+                    ${teacherFeedbackHtml}
                 `;
                 logsList.appendChild(item);
             });
+
+            globalAllLogs = localLogs;
+            if (isTeacherMode) updateTeacherDashboard();
         }
 
         function renderLocalNotes() {
@@ -436,18 +718,372 @@
             localNotes.forEach(msg => {
                 const msgDiv = document.createElement('div');
                 const isMe = msg.userId === currentUser.uid;
-                msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+                msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1`;
+
+                let teacherReplyBlock = '';
+                if (msg.teacherAnswer) {
+                    teacherReplyBlock = `
+                        <div class="mt-1 p-2 rounded-lg bg-indigo-950/80 border border-indigo-500/40 text-[11px] text-indigo-200">
+                            <div class="font-bold text-indigo-400 mb-0.5 flex items-center gap-1">
+                                <i class="fa-solid fa-graduation-cap text-indigo-300"></i> 선생님 답변
+                            </div>
+                            ${escapeHtml(msg.teacherAnswer)}
+                        </div>
+                    `;
+                }
 
                 msgDiv.innerHTML = `
                     <div class="text-[10px] text-slate-500 mb-0.5 px-1">${msg.userName}</div>
-                    <div class="px-3 py-2 rounded-xl text-xs max-w-[85%] break-all ${isMe ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'} shadow-sm">
+                    <div class="px-3 py-2 rounded-xl text-xs max-w-[90%] break-all ${isMe ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'} shadow-sm">
                         ${escapeHtml(msg.text)}
+                        ${teacherReplyBlock}
                     </div>
                 `;
                 chatContainer.appendChild(msgDiv);
             });
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
+            globalAllNotes = localNotes;
+            if (isTeacherMode) updateTeacherDashboard();
+        }
+
+        // Teacher Dashboard Statistics and Table & Tab Render Engine
+        function updateTeacherDashboard() {
+            const list = globalAllLogs || [];
+            const notes = globalAllNotes || [];
+            
+            // Stats
+            const totalSubmissions = list.length;
+            const avgTemp = totalSubmissions > 0 ? (list.reduce((acc, curr) => acc + (curr.maxTemp || 0), 0) / totalSubmissions) : 0;
+            const avgPower = totalSubmissions > 0 ? (list.reduce((acc, curr) => acc + (curr.heatPower || 0), 0) / totalSubmissions) : 0;
+            const chatCount = notes.length;
+
+            document.getElementById('stat-total-submissions').innerText = `${totalSubmissions}건`;
+            document.getElementById('stat-avg-temp').innerText = `${avgTemp.toFixed(1)} °C`;
+            document.getElementById('stat-avg-power').innerText = `${avgPower.toFixed(1)}x`;
+            document.getElementById('stat-total-notes').innerText = `${chatCount}개`;
+
+            // Unreviewed count
+            const unreviewedCount = list.filter(l => !l.teacherFeedback).length;
+            document.getElementById('unreviewed-badge').innerText = unreviewedCount;
+
+            // Unanswered QA count
+            const unansweredCount = notes.filter(n => !n.teacherAnswer).length;
+            document.getElementById('unanswered-badge').innerText = unansweredCount;
+
+            // 1. Table View Rendering
+            const tbody = document.getElementById('teacher-table-body');
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-slate-500">
+                            제출된 실험 결과 데이터가 없습니다.
+                        </td>
+                    </tr>`;
+            } else {
+                list.forEach(log => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-900/60 transition';
+                    
+                    const formattedTime = log.createdAt?.seconds ? new Date(log.createdAt.seconds * 1000).toLocaleString('ko-KR') : (log.timeStr || '방금 전');
+                    const displayUserId = log.userId ? (log.userId.substring(0, 8) + '...') : '익명 학생';
+
+                    const statusBadge = log.teacherFeedback ? 
+                        `<span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-700 font-medium">평가 완료 (${log.grade || '완료'})</span>` : 
+                        `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-950 text-amber-300 border border-amber-700 font-medium">미검토</span>`;
+
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 font-mono text-indigo-300 font-medium">${displayUserId}</td>
+                        <td class="px-4 py-3 font-bold ${log.maxTemp >= 100 ? 'text-rose-400' : log.maxTemp > 0 ? 'text-sky-300' : 'text-indigo-300'}">${log.maxTemp?.toFixed(1)} °C</td>
+                        <td class="px-4 py-3">${log.heatPower || 1}x</td>
+                        <td class="px-4 py-3 text-slate-400">${log.durationSec || 0}초</td>
+                        <td class="px-4 py-3 font-mono text-amber-300">${(log.totalEnergyJ || 0).toLocaleString()} J</td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3 text-[11px] text-slate-500">${formattedTime}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // 2. TAB 2: Grading Cards Render
+            const gradingContainer = document.getElementById('grading-cards-container');
+            gradingContainer.innerHTML = '';
+
+            if (list.length === 0) {
+                gradingContainer.innerHTML = `<div class="text-center text-slate-500 py-12 col-span-2">평가할 과제 제출 기록이 없습니다.</div>`;
+            } else {
+                list.forEach(log => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 flex flex-col gap-3 shadow-md';
+                    const timeStr = log.createdAt?.seconds ? new Date(log.createdAt.seconds * 1000).toLocaleString('ko-KR') : (log.timeStr || '방금 전');
+                    const studentId = log.userId ? log.userId.substring(0, 8) : '익명';
+
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start border-b border-slate-800 pb-2">
+                            <div>
+                                <span class="text-xs font-bold font-mono text-indigo-300">학생 ID: ${studentId}</span>
+                                <div class="text-[11px] text-slate-400">최고 온도: ${log.maxTemp?.toFixed(1)}°C | 시간: ${log.durationSec}초 | 세기: ${log.heatPower}x</div>
+                            </div>
+                            <span class="text-[10px] text-slate-500">${timeStr}</span>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-slate-300 font-medium">선생님 칭찬 도장 / 등급:</label>
+                            <div class="flex gap-2">
+                                <button type="button" class="grade-btn px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 text-amber-300 font-semibold transition ${log.grade === '💯 참잘했어요' ? 'ring-2 ring-amber-400' : ''}" data-log-id="${log.id || ''}" data-grade="💯 참잘했어요">💯 참잘했어요</button>
+                                <button type="button" class="grade-btn px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 text-sky-300 font-semibold transition ${log.grade === '👏 우수함' ? 'ring-2 ring-sky-400' : ''}" data-log-id="${log.id || ''}" data-grade="👏 우수함">👏 우수함</button>
+                                <button type="button" class="grade-btn px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 text-emerald-300 font-semibold transition ${log.grade === '💡 보완필요' ? 'ring-2 ring-emerald-400' : ''}" data-log-id="${log.id || ''}" data-grade="💡 보완필요">💡 보완필요</button>
+                            </div>
+
+                            <textarea id="feedback-input-${log.id || studentId}" rows="2" placeholder="학생에게 전할 격려와 피드백을 적어주세요..." 
+                                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">${log.teacherFeedback || ''}</textarea>
+
+                            <button type="button" class="btn-save-feedback self-end px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1"
+                                data-log-id="${log.id || ''}" data-student-id="${studentId}">
+                                <i class="fa-solid fa-paper-plane"></i> 피드백 저장
+                            </button>
+                        </div>
+                    `;
+                    gradingContainer.appendChild(card);
+                });
+
+                // Add event handlers for grading cards
+                document.querySelectorAll('.btn-save-feedback').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const targetLogId = btn.getAttribute('data-log-id');
+                        const targetStudentId = btn.getAttribute('data-student-id');
+                        const textarea = document.getElementById(`feedback-input-${targetLogId || targetStudentId}`);
+                        const feedbackText = textarea.value.trim();
+
+                        if (!feedbackText) {
+                            showToast("피드백 내용을 입력해주세요.", "error");
+                            return;
+                        }
+
+                        // find grade
+                        const activeGradeBtn = btn.parentElement.querySelector('.grade-btn.ring-2');
+                        const selectedGrade = activeGradeBtn ? activeGradeBtn.getAttribute('data-grade') : '💯 참잘했어요';
+
+                        await saveFeedback(targetLogId, targetStudentId, feedbackText, selectedGrade);
+                    });
+                });
+
+                document.querySelectorAll('.grade-btn').forEach(gBtn => {
+                    gBtn.addEventListener('click', () => {
+                        gBtn.parentElement.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('ring-2', 'ring-amber-400', 'ring-sky-400', 'ring-emerald-400'));
+                        gBtn.classList.add('ring-2', 'ring-amber-400');
+                    });
+                });
+            }
+
+            // 3. TAB 3: Q&A Board Response Render
+            const qaListContainer = document.getElementById('teacher-qa-list');
+            qaListContainer.innerHTML = '';
+
+            if (notes.length === 0) {
+                qaListContainer.innerHTML = `<div class="text-center text-slate-500 py-12">작성된 질문 게시물이 없습니다.</div>`;
+            } else {
+                notes.forEach(note => {
+                    const qaCard = document.createElement('div');
+                    qaCard.className = 'bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 flex flex-col gap-3 shadow-md';
+                    const noteTime = note.createdAt?.seconds ? new Date(note.createdAt.seconds * 1000).toLocaleString('ko-KR') : '방금 전';
+
+                    qaCard.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-bold">${note.userName || '학생'}</span>
+                                <span class="text-[11px] text-slate-400">${noteTime}</span>
+                            </div>
+                            ${note.teacherAnswer ? '<span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-700">답변 완료</span>' : '<span class="text-[10px] text-rose-400 font-bold bg-rose-950/80 px-2 py-0.5 rounded-full border border-rose-700">답변 대기</span>'}
+                        </div>
+
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
+                            "${escapeHtml(note.text)}"
+                        </div>
+
+                        <div class="flex flex-col gap-2 mt-1">
+                            <label class="text-xs text-slate-300 font-medium flex items-center gap-1">
+                                <i class="fa-solid fa-reply text-indigo-400"></i> 선생님 답변 작성하기:
+                            </label>
+                            <textarea id="reply-input-${note.id || note.userName}" rows="2" placeholder="학생의 질문에 친절하고 명확한 과학적 설명을 남겨주세요..." 
+                                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">${note.teacherAnswer || ''}</textarea>
+
+                            <button type="button" class="btn-save-reply self-end px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1"
+                                data-note-id="${note.id || ''}" data-user-name="${note.userName || ''}">
+                                <i class="fa-solid fa-check"></i> 답변 등록/수정
+                            </button>
+                        </div>
+                    `;
+                    qaListContainer.appendChild(qaCard);
+                });
+
+                document.querySelectorAll('.btn-save-reply').forEach(rBtn => {
+                    rBtn.addEventListener('click', async () => {
+                        const noteId = rBtn.getAttribute('data-note-id');
+                        const userName = rBtn.getAttribute('data-user-name');
+                        const replyInput = document.getElementById(`reply-input-${noteId || userName}`);
+                        const replyText = replyInput.value.trim();
+
+                        if (!replyText) {
+                            showToast("답변 내용을 입력해주세요.", "error");
+                            return;
+                        }
+
+                        await saveTeacherReply(noteId, userName, replyText);
+                    });
+                });
+            }
+        }
+
+        // Feedback saving logic
+        async function saveFeedback(logId, studentId, feedbackText, grade) {
+            if (isLocalFallback) {
+                const target = localLogs.find(l => (l.id && l.id === logId) || l.userId === studentId);
+                if (target) {
+                    target.teacherFeedback = feedbackText;
+                    target.grade = grade;
+                } else if (localLogs.length > 0) {
+                    localLogs[0].teacherFeedback = feedbackText;
+                    localLogs[0].grade = grade;
+                }
+                renderLocalLogs();
+                showToast("선생님 피드백이 등록되었습니다! (로컬)", "success");
+                return;
+            }
+
+            try {
+                if (logId) {
+                    const logDocRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'experiment_logs', logId);
+                    await updateDoc(logDocRef, {
+                        teacherFeedback: feedbackText,
+                        grade: grade,
+                        reviewedAt: serverTimestamp()
+                    });
+                    showToast("선생님 피드백과 등급이 성공적으로 등록되었습니다!", "success");
+                }
+            } catch (err) {
+                console.warn("Feedback save error:", err);
+                showToast("피드백 저장 실패. 로컬 모드로 동작합니다.", "error");
+            }
+        }
+
+        // Reply saving logic
+        async function saveTeacherReply(noteId, userName, replyText) {
+            if (isLocalFallback) {
+                const target = localNotes.find(n => (n.id && n.id === noteId) || n.userName === userName);
+                if (target) {
+                    target.teacherAnswer = replyText;
+                } else if (localNotes.length > 0) {
+                    localNotes[0].teacherAnswer = replyText;
+                }
+                renderLocalNotes();
+                showToast("선생님 답변이 등록되었습니다! (로컬)", "success");
+                return;
+            }
+
+            try {
+                if (noteId) {
+                    const noteDocRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'lab_notes', noteId);
+                    await updateDoc(noteDocRef, {
+                        teacherAnswer: replyText,
+                        answeredAt: serverTimestamp()
+                    });
+                    showToast("선생님 답변이 성공적으로 공유 게시판에 등록되었습니다!", "success");
+                }
+            } catch (err) {
+                console.warn("Reply save error:", err);
+                showToast("답변 저장 실패.", "error");
+            }
+        }
+
+        // CSV Export Feature for Teachers
+        document.getElementById('btn-export-csv').addEventListener('click', () => {
+            const list = globalAllLogs || [];
+            if (list.length === 0) {
+                showToast("내보낼 데이터가 없습니다.", "error");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "학생ID,최고온도(C),가열세기,소요시간(초),총가열에너지(J),제출시각\n";
+
+            list.forEach(log => {
+                const timeStr = log.createdAt?.seconds ? new Date(log.createdAt.seconds * 1000).toLocaleString('ko-KR') : (log.timeStr || '');
+                const uid = log.userId || '익명';
+                csvContent += `"${uid}",${log.maxTemp || 0},${log.heatPower || 1},${log.durationSec || 0},${log.totalEnergyJ || 0},"${timeStr}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `상변화_실험결과_학급데이터_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast("CSV 파일이 성공적으로 다운로드되었습니다.", "success");
+        });
+
+        // Mode Switching Logic
+        const btnSwitchMode = document.getElementById('btn-switch-mode');
+        const modeBtnText = document.getElementById('mode-btn-text');
+        const pinModal = document.getElementById('teacher-pin-modal');
+        const pinInput = document.getElementById('teacher-pin-input');
+        const pinError = document.getElementById('pin-error-msg');
+        const studentView = document.getElementById('student-view');
+        const teacherView = document.getElementById('teacher-view');
+
+        function showStudentView() {
+            isTeacherMode = false;
+            teacherView.classList.add('hidden');
+            studentView.classList.remove('hidden');
+            modeBtnText.innerText = "교사용 모드 전환";
+            btnSwitchMode.className = "px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5";
+        }
+
+        function showTeacherDashboard() {
+            isTeacherMode = true;
+            studentView.classList.add('hidden');
+            teacherView.classList.remove('hidden');
+            modeBtnText.innerText = "학생 실험실 전환";
+            btnSwitchMode.className = "px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold text-xs rounded-xl transition flex items-center gap-1.5";
+            updateTeacherDashboard();
+            showToast("교사 전용 모드로 전환되었습니다.", "info");
+        }
+
+        btnSwitchMode.addEventListener('click', () => {
+            if (isTeacherMode) {
+                showStudentView();
+            } else {
+                pinInput.value = '';
+                pinError.classList.add('hidden');
+                pinModal.classList.remove('hidden');
+                pinInput.focus();
+            }
+        });
+
+        document.getElementById('btn-back-to-student').addEventListener('click', showStudentView);
+
+        document.getElementById('btn-cancel-pin').addEventListener('click', () => {
+            pinModal.classList.add('hidden');
+        });
+
+        document.getElementById('btn-submit-pin').addEventListener('click', verifyPin);
+        pinInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyPin();
+        });
+
+        function verifyPin() {
+            const enteredPin = pinInput.value.trim();
+            // Teacher password validation
+            if (enteredPin === '20260725') {
+                pinModal.classList.add('hidden');
+                showTeacherDashboard();
+            } else {
+                pinError.classList.remove('hidden');
+            }
         }
 
         // Helper to sanitize HTML text
