@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>물질의 상태 변화와 열에너지 | 중1 과학 탐구실</title>
+    <title>물질의 상태 변화와 열에너지 - 과학 탐구 가상 실험실</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons CDN -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans KR & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        lab: {
-                            bg: '#f4f7fb',
-                            card: '#ffffff',
-                            primary: '#6C5CE7',
-                            primaryHover: '#5B4BC4',
-                            secondary: '#74B9FF',
-                            mint: '#55E6C1',
-                            pink: '#FF7675',
-                            amber: '#FDCB6E',
-                            dark: '#2D3436',
-                            muted: '#636E72',
-                            lightBorder: '#E2E8F0'
+                        pastel: {
+                            blue: '#38BDF8',
+                            lightBlue: '#E0F2FE',
+                            mint: '#34D399',
+                            lightMint: '#D1FAE5',
+                            lavender: '#A78BFA',
+                            lightLavender: '#EDE9FE',
+                            coral: '#F87171',
+                            lightCoral: '#FEE2E2',
+                            slate: '#0F172A',
+                            cardBg: '#FFFFFF',
+                            labBg: '#F8FAFC'
                         }
                     },
                     fontFamily: {
-                        sans: ['Noto Sans KR', 'Inter', 'sans-serif']
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
                     }
                 }
             }
@@ -41,1545 +40,1052 @@
     </script>
     <style>
         body {
-            background-color: #f4f7fb;
             font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            overflow-x: hidden;
         }
+        
+        .lab-glass {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .lab-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .lab-card:hover {
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #EDF2F7;
+            background: #F1F5F9;
         }
         ::-webkit-scrollbar-thumb {
-            background: #CBD5E0;
+            background: #CBD5E1;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #A0AEC0;
+            background: #94A3B8;
         }
-        .pulse-subtle {
-            animation: pulse-border 2s infinite;
+
+        .tab-btn.active {
+            background-color: #38BDF8;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
         }
-        @keyframes pulse-border {
-            0%, 100% { border-color: rgba(99, 102, 241, 0.4); }
-            50% { border-color: rgba(99, 102, 241, 0.9); }
+
+        .carousel-item {
+            display: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .carousel-item.active {
+            display: block;
         }
     </style>
 </head>
-<body class="text-gray-800 antialiased min-h-screen flex flex-col justify-between selection:bg-purple-200">
+<body class="min-h-screen flex flex-col bg-slate-50">
 
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('home')">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-sky-400 flex items-center justify-center text-white shadow-md">
-                        <i class="fa-solid font-bold fa-flask-vial text-lg"></i>
-                    </div>
-                    <div>
-                        <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-indigo-600 to-sky-500 bg-clip-text text-transparent">Lab-Note</span>
-                        <span class="hidden sm:inline-block text-xs text-slate-500 font-medium ml-1">| 중1 과학 탐구실</span>
-                    </div>
+    <!-- Navigation Bar (Hidden on landing page, shown after dashboard selection) -->
+    <header id="main-header" class="hidden sticky top-0 z-40 lab-glass border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pastel-blue to-pastel-mint flex items-center justify-center text-white font-bold shadow-md shadow-sky-200">
+                    <i class="fa-solid font-bold fa-flask text-lg"></i>
                 </div>
-
-                <!-- Desktop Nav -->
-                <nav class="hidden md:flex items-center space-x-1 font-medium text-sm text-slate-600">
-                    <button onclick="switchPage('home')" id="nav-home" class="px-3 py-2 rounded-lg hover:bg-slate-100 transition text-indigo-600 font-semibold">
-                        <i class="fa-solid fa-house mr-1.5"></i>메인
-                    </button>
-                    <button onclick="switchPage('guide')" id="nav-guide" class="px-3 py-2 rounded-lg hover:bg-slate-100 transition">
-                        <i class="fa-solid fa-compass mr-1.5"></i>탐구 안내
-                    </button>
-                    <button onclick="switchPage('sim')" id="nav-sim" class="px-3 py-2 rounded-lg hover:bg-slate-100 transition">
-                        <i class="fa-solid fa-atom mr-1.5"></i>입자 시뮬레이션
-                    </button>
-                    <button onclick="switchPage('board')" id="nav-board" class="px-3 py-2 rounded-lg hover:bg-slate-100 transition">
-                        <i class="fa-solid fa-pen-to-square mr-1.5"></i>과제 제출 / 질문
-                    </button>
-                </nav>
-
-                <!-- Role Badge & Dashboard Switch -->
-                <div class="flex items-center space-x-2">
-                    <span id="role-badge" class="px-2.5 py-1 text-xs rounded-full font-semibold bg-sky-100 text-sky-700 border border-sky-200 flex items-center">
-                        <i class="fa-solid fa-user-graduate mr-1"></i>학생 모드
-                    </span>
-                    <button onclick="openAuthModal()" id="teacher-switch-btn" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition border border-indigo-200 shadow-sm flex items-center">
-                        <i class="fa-solid fa-lock mr-1"></i>교사 인증
-                    </button>
-                    <!-- Mobile Hamburger -->
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
+                <div>
+                    <span class="text-xs font-bold text-sky-600 tracking-wider uppercase bg-sky-100 px-2 py-0.5 rounded-full">중1 과학 탐구</span>
+                    <h1 class="text-lg font-bold text-slate-800 leading-tight">물질의 상태 변화 Lab</h1>
                 </div>
             </div>
-        </div>
 
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1">
-            <button onclick="switchPage('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-house w-6 text-indigo-500"></i>메인
-            </button>
-            <button onclick="switchPage('guide'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-compass w-6 text-sky-500"></i>탐구 안내
-            </button>
-            <button onclick="switchPage('sim'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-atom w-6 text-emerald-500"></i>입자 시뮬레이션
-            </button>
-            <button onclick="switchPage('board'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-pen-to-square w-6 text-purple-500"></i>과제 제출 / 질문
-            </button>
-            <div id="mobile-teacher-link" class="hidden pt-2 border-t border-slate-100">
-                <button onclick="switchPage('teacher'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-indigo-600 hover:bg-indigo-50">
-                    <i class="fa-solid fa-chalkboard-user w-6"></i>교사 전용 대시보드
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex space-x-1 lg:space-x-2 text-sm font-medium">
+                <button onclick="switchPage('home')" id="nav-home" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition">
+                    <i class="fa-solid fa-house mr-1.5"></i> 홈 & 공지
+                </button>
+                <button onclick="switchPage('guide')" id="nav-guide" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition">
+                    <i class="fa-solid fa-compass mr-1.5"></i> 탐구 안내
+                </button>
+                <button onclick="switchPage('sim')" id="nav-sim" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition">
+                    <i class="fa-solid fa-atom mr-1.5"></i> 입자 가상 실험실
+                </button>
+                <button onclick="switchPage('board')" id="nav-board" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition">
+                    <i class="fa-solid fa-pen-to-square mr-1.5"></i> 과제 & 질문게시판
+                </button>
+            </nav>
+
+            <!-- Role Selector & Status -->
+            <div class="flex items-center space-x-2">
+                <div id="role-badge" class="hidden sm:flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 border border-sky-200">
+                    <span class="w-2 h-2 rounded-full bg-sky-500 mr-1.5 animate-pulse"></span>
+                    <span id="role-text">학생 접속 모드</span>
+                </div>
+                
+                <button onclick="switchPage('landing')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition flex items-center shadow-sm">
+                    <i class="fa-solid fa-right-left mr-1.5"></i>
+                    <span>모드 전환</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+    <!-- Teacher Login Modal -->
+    <div id="teacher-login-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-lock text-purple-600 mr-2"></i> 교사 인증 비밀번호
+                </h3>
+                <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
 
-        <!-- ================= PAGE 1: HOME ================= -->
-        <section id="page-home" class="space-y-8">
-            <!-- Hero Banner -->
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-sky-50 to-pink-50 border border-slate-200/80 p-6 sm:p-10 shadow-sm">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <p class="text-xs text-slate-500 mb-4">
+                교사 대시보드 진입을 위해 인증 정보를 입력해 주세요. (기본 아이디: teacher / 비번: 1234)
+            </p>
+
+            <div class="space-y-3 mb-4">
+                <div>
+                    <label class="text-[11px] font-semibold text-slate-600 block mb-1">아이디 (ID)</label>
+                    <input type="text" id="teacher-id" value="teacher" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-slate-600 block mb-1">비밀번호 (Password)</label>
+                    <input type="password" id="teacher-pw" value="1234" placeholder="기본: 1234" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-purple-500">
+                </div>
+            </div>
+
+            <div id="login-error" class="hidden text-[11px] text-rose-500 mb-3 font-medium">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> 아이디 또는 비밀번호가 올바르지 않습니다.
+            </div>
+
+            <button onclick="attemptTeacherLogin()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-purple-200 flex items-center justify-center">
+                <i class="fa-solid fa-key mr-2"></i> 교사 대시보드 로그인
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 flex flex-col">
+
+        <!-- SPLIT LANDING ENTRY PAGE (첫 접속 화면) -->
+        <section id="page-landing" class="page-content flex-1 min-h-[calc(100vh-4rem)] flex flex-col justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 p-4 md:p-8">
+            <div class="max-w-6xl mx-auto w-full space-y-8">
+                
+                <!-- Main Title Header -->
+                <div class="text-center space-y-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                        <i class="fa-solid fa-flask mr-1.5 text-sky-400"></i> 2026 중학교 1학년 과학 탐구 프로젝트
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+                        물질의 상태 변화와 <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-teal-300">열에너지의 관계</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto font-light">
+                        접속 모드를 선택해 주세요. 학생 모드는 가상 입자 시뮬레이터와 과제 제출에 바로 진입하며, 교사 모드는 학생 관리 및 평가 대시보드로 이동합니다.
+                    </p>
+                </div>
+
+                <!-- Split Selection Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto pt-4">
                     
-                    <!-- Text Content -->
-                    <div class="lg:col-span-7 space-y-4 z-10">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
-                            <i class="fa-solid fa-microscope mr-1.5"></i>중학교 1학년 과학 탐구실
-                        </span>
-                        <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-800 leading-tight">
-                            <span class="text-indigo-600">물질의 상태 변화</span>와<br class="hidden sm:inline"> 열에너지의 관계
-                        </h1>
-                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
-                            온도가 달라지면 물질을 이루는 작은 입자들의 운동은 어떻게 바뀔까요?<br>
-                            직접 현상을 선택하고 가열·냉각하며 입자 수준의 미시적 변화를 탐구해 봅시다.
-                        </p>
+                    <!-- Left: Student Dedicated Entry Card -->
+                    <div onclick="enterStudentMode()" class="group relative bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-3xl p-8 border border-sky-400/30 hover:border-sky-400 transition-all duration-300 cursor-pointer shadow-2xl flex flex-col justify-between overflow-hidden">
+                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-sky-400/10 rounded-full blur-2xl group-hover:bg-sky-400/20 transition"></div>
                         
-                        <!-- Mode Quick Entry Buttons -->
-                        <div class="pt-2 flex flex-wrap gap-3">
-                            <button onclick="switchPage('sim')" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md hover:shadow-lg transition flex items-center">
-                                <i class="fa-solid fa-circle-play mr-2"></i>현상별 상태 변화 시뮬레이션
-                            </button>
-                            <button onclick="openAuthModal()" class="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-sm shadow-sm transition flex items-center">
-                                <i class="fa-solid fa-user-shield mr-2 text-indigo-500"></i>교사 전용 대시보드
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Hero Particles Canvas Preview -->
-                    <div class="lg:col-span-5 relative">
-                        <div class="bg-white/90 rounded-2xl p-4 shadow-md border border-slate-200">
-                            <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                                <span class="text-xs font-bold text-slate-600"><i class="fa-solid fa-atom text-sky-500 mr-1"></i>열에너지에 따른 입자 운동</span>
-                                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">실시간 동역학</span>
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 to-teal-300 flex items-center justify-center text-slate-900 font-bold text-2xl shadow-lg shadow-sky-500/30 mb-6 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-user-graduate"></i>
                             </div>
-                            <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden shadow-inner">
-                                <canvas id="hero-canvas" class="w-full h-full"></canvas>
-                                <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs text-white text-[10px] px-2 py-1 rounded-md">
-                                    열에너지 활성화 중
-                                </div>
-                            </div>
-                            <p class="mt-2 text-center text-xs text-slate-500">입자들이 마구잡이로 불규칙하게 운동하는 모습</p>
-                        </div>
-                    </div>
 
-                </div>
-            </div>
+                            <span class="text-xs font-bold text-sky-300 uppercase tracking-widest bg-sky-500/20 px-3 py-1 rounded-full border border-sky-400/30">
+                                Student Portal
+                            </span>
 
-            <!-- Features Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                    <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-cubes-stacked"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-base mb-1">4가지 일상 현상 시뮬레이션</h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        얼음 융해, 물 기화, 이슬 액화, 드라이아이스 승화 현상을 단계별 입자 운동으로 명확히 시각화합니다.
-                    </p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                    <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-fire-flame-curved"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-base mb-1">열에너지 흡수와 방출</h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        상태 변화 구간에서 결합이 무너지거나 정렬되는 과정을 입자 사이 거리와 속도 변화로 확인합니다.
-                    </p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-comments"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-base mb-1">과제 제출 & 피드백 시스템</h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        학생은 보고서 및 질문을 제출하고, 교사는 완벽해요/참잘했어요 도장 및 공식 답변을 남길 수 있습니다.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Notice Board & Quick Status -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-bullhorn text-indigo-500"></i>
-                            <h3 class="font-bold text-slate-800">탐구 공지사항</h3>
-                        </div>
-                        <span class="text-xs font-semibold text-slate-400">학급 정원: 27명</span>
-                    </div>
-                    <div class="space-y-3" id="notice-list">
-                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-indigo-600 text-xs"><i class="fa-solid fa-star mr-1"></i>선생님 안내</span>
-                                <span class="text-[11px] text-slate-400">2026.07.25</span>
-                            </div>
-                            <p class="text-slate-700 text-xs sm:text-sm font-medium">
-                                [오늘의 탐구 미션] 4가지 일상 현상 시뮬레이션을 재생해 보고, '상태 변화 구간'에서 입자 배열이 어떻게 변하는지 질문/제출란에 기록하세요.
+                            <h2 class="text-2xl font-black text-white mt-3 mb-2">학생 전용 대시보드</h2>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                입자 시뮬레이터를 통한 가상 실험, 단계별 탐구 가이드 확인, 일상생활 상태 변화 예시 등록 및 모둠 과제 제출
                             </p>
                         </div>
-                    </div>
-                </div>
 
-                <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-md flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">중1 과학 학급실</span>
-                            <i class="fa-solid fa-graduation-cap text-lg opacity-80"></i>
-                        </div>
-                        <h4 class="text-xl font-bold mb-2">입자 운동으로 이해하는 과학</h4>
-                        <p class="text-xs text-indigo-100 leading-relaxed mb-4">
-                            실시간 시뮬레이터로 입자 간 거리, 진동, 결합 변화를 눈으로 직접 관찰하세요.
-                        </p>
-                    </div>
-                    <button onclick="switchPage('sim')" class="w-full py-2.5 bg-white text-indigo-700 font-bold rounded-xl text-xs hover:bg-indigo-50 transition text-center shadow">
-                        시뮬레이션실 바로가기 <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= PAGE 2: GUIDE ================= -->
-        <section id="page-guide" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-                <div class="max-w-3xl mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">탐구 안내 및 단계별 학습 목표</h2>
-                    <p class="text-slate-600 text-sm">3가지 탭을 눌러 주요 개념과 평가 기준을 살펴볼 수 있습니다.</p>
-                </div>
-
-                <!-- Tab Buttons -->
-                <div class="flex border-b border-slate-200 space-x-2 sm:space-x-4 overflow-x-auto pb-1" id="guide-tabs">
-                    <button onclick="setGuideTab(1)" id="gtab-1" class="px-4 py-2.5 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap">
-                        1단계: 3가지 상태와 입자 배열
-                    </button>
-                    <button onclick="setGuideTab(2)" id="gtab-2" class="px-4 py-2.5 font-medium text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-700 whitespace-nowrap">
-                        2단계: 열에너지 흡수·방출 과정
-                    </button>
-                    <button onclick="setGuideTab(3)" id="gtab-3" class="px-4 py-2.5 font-medium text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-700 whitespace-nowrap">
-                        3단계: 탐구 평가 기준
-                    </button>
-                </div>
-
-                <!-- Content 1 -->
-                <div id="gcontent-1" class="pt-6 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-4 bg-sky-50 rounded-xl border border-sky-100">
-                            <span class="inline-block px-2.5 py-0.5 bg-sky-200 text-sky-800 text-xs font-bold rounded mb-2">고체 (Solid)</span>
-                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
-                                <li>입자들이 매우 빽빽하고 규칙적 배열</li>
-                                <li>제자리에서 미세한 진동 운동만 함</li>
-                                <li>모양과 부피가 일정함</li>
-                            </ul>
-                        </div>
-                        <div class="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                            <span class="inline-block px-2.5 py-0.5 bg-indigo-200 text-indigo-800 text-xs font-bold rounded mb-2">액체 (Liquid)</span>
-                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
-                                <li>입자들이 고체보다 비교적 불규칙적</li>
-                                <li>서로 미끄러지듯 위치를 바꾸며 이동</li>
-                                <li>부피는 일정하나 모양은 용기에 따라 변함</li>
-                            </ul>
-                        </div>
-                        <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
-                            <span class="inline-block px-2.5 py-0.5 bg-pink-200 text-pink-800 text-xs font-bold rounded mb-2">기체 (Gas)</span>
-                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
-                                <li>입자 간 거리가 매우 멀고 매우 불규칙</li>
-                                <li>사방으로 매우 빠르게 날아다님</li>
-                                <li>모양과 부피가 모두 일정하지 않음</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content 2 -->
-                <div id="gcontent-2" class="hidden pt-6 space-y-4">
-                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                        <h4 class="font-bold text-slate-800 text-sm mb-3"><i class="fa-solid fa-arrows-rotate text-indigo-500 mr-2"></i>열에너지에 따른 상태 변화 용어</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                            <div class="p-4 bg-red-50 border border-red-100 rounded-xl space-y-1">
-                                <span class="font-bold text-red-600"><i class="fa-solid fa-temperature-arrow-up mr-1"></i>가열 (열에너지 흡수)</span>
-                                <p class="text-slate-700">• 융해: 고체 → 액체</p>
-                                <p class="text-slate-700">• 기화: 액체 → 기체</p>
-                                <p class="text-slate-700">• 승화: 고체 → 기체</p>
-                                <p class="text-slate-500 text-[11px] mt-1">→ 입자 운동 활발해짐, 입자 사이 거리 멀어짐</p>
-                            </div>
-                            <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl space-y-1">
-                                <span class="font-bold text-blue-600"><i class="fa-solid fa-temperature-arrow-down mr-1"></i>냉각 (열에너지 방출)</span>
-                                <p class="text-slate-700">• 응고: 액체 → 고체</p>
-                                <p class="text-slate-700">• 액화: 기체 → 액체</p>
-                                <p class="text-slate-700">• 승화: 기체 → 고체</p>
-                                <p class="text-slate-500 text-[11px] mt-1">→ 입자 운동 둔해짐, 입자 사이 거리 가까워짐</p>
+                        <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xs font-bold text-sky-300 group-hover:text-white transition">학생 모드로 시작하기</span>
+                            <div class="w-9 h-9 rounded-full bg-sky-400 text-slate-900 flex items-center justify-center font-bold text-sm group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right"></i>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Content 3 -->
-                <div id="gcontent-3" class="hidden pt-6 space-y-4">
-                    <div class="p-5 bg-purple-50 rounded-2xl border border-purple-100 space-y-3">
-                        <h4 class="font-bold text-purple-900 text-sm"><i class="fa-solid fa-award text-purple-600 mr-2"></i>평가 요소 및 등급 도장 안내</h4>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                            <div class="p-3 bg-white rounded-xl text-center border border-purple-100">
-                                <span class="text-xl block mb-1">💯</span>
-                                <span class="font-bold text-purple-800">완벽해요</span>
-                                <p class="text-[10px] text-slate-500 mt-1">입자 운동과 승화/융해 과정의 원리를 완벽히 기술함</p>
-                            </div>
-                            <div class="p-3 bg-white rounded-xl text-center border border-purple-100">
-                                <span class="text-xl block mb-1">👏</span>
-                                <span class="font-bold text-indigo-800">참 잘했어요</span>
-                                <p class="text-[10px] text-slate-500 mt-1">실험 관찰 내용을 정확하게 정리함</p>
-                            </div>
-                            <div class="p-3 bg-white rounded-xl text-center border border-purple-100">
-                                <span class="text-xl block mb-1">👍</span>
-                                <span class="font-bold text-sky-800">보통이에요</span>
-                                <p class="text-[10px] text-slate-500 mt-1">상태 변화 용어를 적절히 사용함</p>
-                            </div>
-                            <div class="p-3 bg-white rounded-xl text-center border border-purple-100">
-                                <span class="text-xl block mb-1">💡</span>
-                                <span class="font-bold text-amber-800">보완 필요</span>
-                                <p class="text-[10px] text-slate-500 mt-1">피드백을 참고하여 내용을 보완해 보세요</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- ================= PAGE 3: SIMULATION & REAL-LIFE PHENOMENA ================= -->
-        <section id="page-sim" class="hidden space-y-8">
-            
-            <!-- Phenomenon Selector & Simulator Container -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                
-                <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
-                    <div>
-                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">
-                            <i class="fa-solid fa-flask mr-1"></i>4가지 주요 일상 현상 입자 시뮬레이션
-                        </span>
-                        <h2 class="text-xl font-bold text-slate-800 mt-1">일상 현상 속 상태 변화 과정 관찰</h2>
-                    </div>
-
-                    <!-- 4 Phenomenon Buttons -->
-                    <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
-                        <button onclick="selectPhenomenon('ice')" id="pbtn-ice" class="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm transition flex items-center justify-center">
-                            🧊 얼음이 녹을 때 (융해)
-                        </button>
-                        <button onclick="selectPhenomenon('water')" id="pbtn-water" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center justify-center">
-                            ♨️ 물이 끓을 때 (기화)
-                        </button>
-                        <button onclick="selectPhenomenon('dew')" id="pbtn-dew" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center justify-center">
-                            💧 이슬 맺힐 때 (액화)
-                        </button>
-                        <button onclick="selectPhenomenon('dryice')" id="pbtn-dryice" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center justify-center">
-                            💨 드라이아이스 (승화)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Simulation Main Display Area -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    
-                    <!-- Canvas & Step Controls -->
-                    <div class="lg:col-span-8 flex flex-col items-center space-y-4">
+                    <!-- Right: Teacher Dedicated Entry Card -->
+                    <div onclick="openTeacherModal()" class="group relative bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-3xl p-8 border border-purple-400/30 hover:border-purple-400 transition-all duration-300 cursor-pointer shadow-2xl flex flex-col justify-between overflow-hidden">
+                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-purple-400/10 rounded-full blur-2xl group-hover:bg-purple-400/20 transition"></div>
                         
-                        <!-- Canvas Box -->
-                        <div class="relative w-full h-80 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-inner flex items-center justify-center">
-                            <canvas id="phenom-canvas" class="w-full h-full"></canvas>
-                            
-                            <!-- Phase Overlay Badge -->
-                            <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-700 text-white text-xs space-y-1 shadow-lg">
-                                <div class="flex items-center space-x-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                    <span class="font-bold text-slate-200">현재 단계:</span>
-                                    <span id="phase-title" class="font-extrabold text-amber-300">1단계: 고체 가열 (진동 증가)</span>
-                                </div>
-                                <div class="text-[11px] text-slate-300">
-                                    입자 특성: <span id="phase-part-desc" class="text-sky-300 font-semibold">규칙적 배열에서 진동이 점점 커짐</span>
-                                </div>
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-400 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-purple-500/30 mb-6 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-chalkboard-user"></i>
                             </div>
 
-                            <!-- Temperature Indicator -->
-                            <div class="absolute top-3 right-3 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-rose-300 flex items-center space-x-1">
-                                <i class="fa-solid fa-temperature-three-quarters text-rose-400"></i>
-                                <span id="phase-temp-disp">온도: 0°C</span>
+                            <span class="text-xs font-bold text-purple-300 uppercase tracking-widest bg-purple-500/20 px-3 py-1 rounded-full border border-purple-400/30">
+                                Teacher Portal
+                            </span>
+
+                            <h2 class="text-2xl font-black text-white mt-3 mb-2">교사 전용 대시보드</h2>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                학급 학생 27명의 과제 제출 현황 모니터링, 보고서 피드백 작성, 우수 탐구 지정 및 지도 관리 기능
+                            </p>
+                        </div>
+
+                        <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xs font-bold text-purple-300 group-hover:text-white transition">비밀번호 인증 후 진입</span>
+                            <div class="w-9 h-9 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-sm group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- HOME PAGE -->
+        <section id="page-home" class="page-content hidden">
+            <!-- Hero Banner with Particle Canvas -->
+            <div class="relative bg-gradient-to-b from-sky-50 via-slate-50 to-white py-12 md:py-16 overflow-hidden border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        
+                        <!-- Left Hero Text -->
+                        <div class="lg:col-span-7 space-y-5">
+                            <div class="inline-flex items-center space-x-2 bg-white/90 border border-sky-200 px-3 py-1.5 rounded-full shadow-sm">
+                                <span class="flex h-2 w-2 rounded-full bg-sky-400"></span>
+                                <span class="text-xs font-bold text-sky-700">2026학년도 중학교 1학년 과학 탐구 프로젝트</span>
+                            </div>
+
+                            <h2 class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-800 leading-tight tracking-tight">
+                                물질의 상태 변화와<br>
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-teal-400 to-indigo-500">
+                                    열에너지의 관계
+                                </span>
+                            </h2>
+
+                            <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
+                                온도가 바뀌면 입자들의 운동은 어떻게 변할까요? 
+                                얼음이 물이 되고, 물이 수증기로 변하는 순간 열에너지는 어떻게 이동하는지 가상 입자 시뮬레이션을 통해 직접 눈으로 확인해 보세요!
+                            </p>
+
+                            <!-- Hero Quick Actions -->
+                            <div class="flex flex-wrap gap-3 pt-2">
+                                <button onclick="switchPage('sim')" class="px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm transition shadow-lg shadow-sky-200 flex items-center">
+                                    <i class="fa-solid fa-flask-vial mr-2"></i> 입자 시뮬레이터 시작
+                                </button>
+                                <button onclick="switchPage('guide')" class="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm border border-slate-200 transition shadow-sm flex items-center">
+                                    <i class="fa-solid fa-list-check mr-2 text-sky-500"></i> 탐구 일정 및 방법
+                                </button>
+                            </div>
+
+                            <!-- Class Info Stats -->
+                            <div class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-200/60 max-w-lg">
+                                <div class="bg-white/80 p-3 rounded-xl border border-slate-200/80">
+                                    <p class="text-[11px] font-semibold text-slate-400">참여 대상</p>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-800">중1 전체 (27명)</p>
+                                </div>
+                                <div class="bg-white/80 p-3 rounded-xl border border-slate-200/80">
+                                    <p class="text-[11px] font-semibold text-slate-400">핵심 활동</p>
+                                    <p class="text-xs sm:text-sm font-bold text-sky-600">입자 모델링 탐구</p>
+                                </div>
+                                <div class="bg-white/80 p-3 rounded-xl border border-slate-200/80">
+                                    <p class="text-[11px] font-semibold text-slate-400">과제 제출율</p>
+                                    <p id="stat-completion" class="text-xs sm:text-sm font-bold text-emerald-600">78% (21/27명)</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Process Timeline & Slider -->
-                        <div class="w-full bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-                                <span id="phenom-title-label">🧊 얼음이 녹을 때 (융해) 과정</span>
-                                <span id="phenom-percent-label" class="text-indigo-600">진행도: 0%</span>
-                            </div>
-
-                            <!-- Range Slider -->
-                            <input type="range" id="phenom-slider" min="0" max="100" value="0" oninput="onProcessSliderChange(this.value)" class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-
-                            <!-- Control Buttons & Auto Play -->
-                            <div class="flex items-center justify-between pt-1">
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="toggleAutoPlay()" id="btn-autoplay" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center">
-                                        <i class="fa-solid fa-play mr-1.5" id="play-icon"></i><span id="play-btn-text">자동 재생</span>
-                                    </button>
-                                    <button onclick="resetProcess()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
-                                        <i class="fa-solid fa-rotate-left mr-1"></i>처음으로
-                                    </button>
+                        <!-- Right Hero Visual Canvas -->
+                        <div class="lg:col-span-5">
+                            <div class="lab-card rounded-2xl p-4 bg-white relative overflow-hidden">
+                                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-3 h-3 rounded-full bg-rose-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                                        <span class="text-xs font-mono text-slate-400 ml-2">Particle Motion Preview</span>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md">실시간 미리보기</span>
                                 </div>
 
-                                <!-- Phase Step Shortcuts -->
-                                <div class="flex space-x-1 text-[11px]">
-                                    <button onclick="jumpToPhase(0)" class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100 font-semibold">1단계</button>
-                                    <button onclick="jumpToPhase(50)" class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100 font-semibold">2단계 (변화 구간)</button>
-                                    <button onclick="jumpToPhase(100)" class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100 font-semibold">3단계</button>
+                                <div class="relative w-full h-64 bg-slate-950 rounded-xl overflow-hidden shadow-inner">
+                                    <canvas id="heroCanvas" class="w-full h-full block"></canvas>
+                                    <div class="absolute bottom-3 left-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-700/50 flex justify-between items-center text-xs text-slate-200">
+                                        <span class="flex items-center"><i class="fa-solid fa-fire text-amber-400 mr-1.5"></i> 상태 모델링</span>
+                                        <span id="hero-state-tag" class="font-bold text-sky-300">액체 (Liquid)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
+                </div>
+            </div>
 
-                    <!-- Dynamic Detailed Step Guide Box -->
-                    <div class="lg:col-span-4 bg-indigo-50/60 border border-indigo-100 p-5 rounded-2xl flex flex-col justify-between">
+            <!-- Notices & Concept Overview Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Announcement Board -->
+                    <div class="lg:col-span-2 lab-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h3 class="text-base font-bold text-slate-800 flex items-center">
+                                <i class="fa-solid fa-bullhorn text-sky-500 mr-2"></i> 탐구실 공지사항 & 안내
+                            </h3>
+                            <span class="text-xs text-slate-400">2026학년도 1학기</span>
+                        </div>
+
                         <div class="space-y-3">
-                            <div class="flex items-center space-x-2 border-b border-indigo-100 pb-2">
-                                <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
-                                    <i class="fa-solid fa-microscope"></i>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm">단계별 입자 변화 원리</h4>
-                            </div>
-
-                            <div class="space-y-2 text-xs">
-                                <div id="step-card-1" class="p-3 bg-white rounded-xl border border-indigo-200 shadow-xs transition">
-                                    <span class="font-bold text-indigo-700 block mb-0.5">🔹 1단계: 출발 상태</span>
-                                    <p id="step-text-1" class="text-slate-600 leading-relaxed">고체 얼음 가열. 온도 상승에 따라 제자리에서 입자 진동 운동이 급격히 커집니다.</p>
-                                </div>
-                                <div id="step-card-2" class="p-3 bg-white/70 rounded-xl border border-slate-200 shadow-xs transition opacity-60">
-                                    <span class="font-bold text-amber-700 block mb-0.5">🔸 2단계: 상태 변화 (융해 구간)</span>
-                                    <p id="step-text-2" class="text-slate-600 leading-relaxed">입자 결합이 무너지며 배열이 무너지기 시작합니다. 입자들이 미끄러지듯 이동합니다.</p>
-                                </div>
-                                <div id="step-card-3" class="p-3 bg-white/70 rounded-xl border border-slate-200 shadow-xs transition opacity-60">
-                                    <span class="font-bold text-emerald-700 block mb-0.5">🔹 3단계: 변환 완료</span>
-                                    <p id="step-text-3" class="text-slate-600 leading-relaxed">완전한 액체 물 상태 형성. 입자가 자유롭게 움직이며 위치를 바꿉니다.</p>
+                            <div class="p-3.5 rounded-xl bg-sky-50/60 border border-sky-100 flex items-start space-x-3">
+                                <span class="px-2 py-1 bg-sky-500 text-white font-bold text-[10px] rounded-md mt-0.5">필독</span>
+                                <div class="flex-1">
+                                    <h4 class="text-xs sm:text-sm font-bold text-slate-800">입자 시뮬레이션을 활용한 상태 변화 보고서 제출 안내</h4>
+                                    <p class="text-xs text-slate-600 mt-1">상태 변화 시 열에너지가 흡수되거나 방출되는 원리를 가상 실험실에서 확인한 뒤 [과제 제출] 게시판에 등록해 주세요.</p>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mt-4 pt-3 border-t border-indigo-100 text-[11px] text-indigo-900 bg-white p-3 rounded-xl border">
-                            <span class="font-bold block mb-0.5"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>선생님 관찰 팁</span>
-                            <span id="phenom-teacher-tip">슬라이더를 천천히 끌면서 입자의 결합 형태가 풀리는 핵심 순간을 찾아보세요!</span>
-                        </div>
                     </div>
 
-                </div>
-            </div>
-
-            <!-- Quiz Section -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
-                    <div>
-                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">개념 점검</span>
-                        <h3 class="text-lg font-bold text-slate-800 mt-1">현상별 입자 운동 자가 진단 퀴즈</h3>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">퀴즈 1</span>
-                            <h4 class="font-bold text-slate-800 text-xs sm:text-sm mt-2 mb-1">드라이아이스가 승화할 때 입자의 거리는?</h4>
-                            <p class="text-xs text-slate-500 mb-3">고체에서 기체로 즉시 변할 때 입자 간 거리는 어떻게 변하나요?</p>
-                        </div>
-                        <div>
-                            <select id="q1-select" class="w-full p-2 text-xs border rounded-lg mb-2 bg-white font-medium">
-                                <option value="">-- 선택하세요 --</option>
-                                <option value="가까워진다">매우 가까워진다</option>
-                                <option value="급격히 멀어진다">매우 급격하게 멀어진다</option>
-                                <option value="변함없다">변함이 없다</option>
-                            </select>
-                            <button onclick="checkQuiz(1, '급격히 멀어진다')" class="w-full py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700">정답 확인</button>
-                            <p id="q1-result" class="text-[11px] font-semibold mt-2 hidden"></p>
-                        </div>
-                    </div>
-
-                    <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">퀴즈 2</span>
-                            <h4 class="font-bold text-slate-800 text-xs sm:text-sm mt-2 mb-1">차가운 컵 표면에 이슬이 맺힐 때(액화)?</h4>
-                            <p class="text-xs text-slate-500 mb-3">수증기(기체)가 차가운 열을 빼앗겨 물(액체)이 될 때 입자 속도는?</p>
-                        </div>
-                        <div>
-                            <select id="q2-select" class="w-full p-2 text-xs border rounded-lg mb-2 bg-white font-medium">
-                                <option value="">-- 선택하세요 --</option>
-                                <option value="느려진다">열을 방출하며 느려진다</option>
-                                <option value="빠르어진다">열을 흡수하여 매우 빨라진다</option>
-                            </select>
-                            <button onclick="checkQuiz(2, '느려진다')" class="w-full py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700">정답 확인</button>
-                            <p id="q2-result" class="text-[11px] font-semibold mt-2 hidden"></p>
-                        </div>
-                    </div>
-
-                    <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">퀴즈 3</span>
-                            <h4 class="font-bold text-slate-800 text-xs sm:text-sm mt-2 mb-1">얼음이 녹는 구간(융해) 동안 입자 배열은?</h4>
-                            <p class="text-xs text-slate-500 mb-3">고체의 규칙적인 결합이 깨지는 과정을 설명하는 알맞은 말은?</p>
-                        </div>
-                        <div>
-                            <select id="q3-select" class="w-full p-2 text-xs border rounded-lg mb-2 bg-white font-medium">
-                                <option value="">-- 선택하세요 --</option>
-                                <option value="규칙성붕괴">규칙적 배열이 해체되며 흘러내린다</option>
-                                <option value="더규칙적">더욱 규칙적인 구형이 된다</option>
-                            </select>
-                            <button onclick="checkQuiz(3, '규칙성붕괴')" class="w-full py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700">정답 확인</button>
-                            <p id="q3-result" class="text-[11px] font-semibold mt-2 hidden"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- ================= PAGE 4: BOARD / SUBMISSION ================= -->
-        <section id="page-board" class="hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Submission Form -->
-                <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm self-start">
-                    <h3 class="text-lg font-bold text-slate-800 mb-1 flex items-center">
-                        <i class="fa-solid fa-paper-plane text-indigo-500 mr-2"></i>탐구 과제 제출 & 질문하기
-                    </h3>
-                    <p class="text-xs text-slate-500 mb-4">시뮬레이션으로 관찰한 입자 운동 특성과 질문을 제출해 주세요.</p>
-
-                    <form id="submission-form" onsubmit="handleBoardSubmit(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">이름 및 학번</label>
-                            <input type="text" id="sub-author" placeholder="예: 1학년 2반 김과학" required class="w-full p-2.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">탐구 주제 / 질문 구분</label>
-                            <select id="sub-category" class="w-full p-2.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                                <option value="실험보고서">🧊 실험보고서 (입자 운동 관찰)</option>
-                                <option value="개념질문">❓ 선생님께 궁금한 과학 질문</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">제목</label>
-                            <input type="text" id="sub-title" placeholder="예: 얼음 융해 시 입자 배열 변화 관찰" required class="w-full p-2.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">내용 작성</label>
-                            <textarea id="sub-content" rows="5" placeholder="시뮬레이션 진행 중 2단계(상태 변화 구간)에서 입자의 결합과 속도가 어떻게 변경되었는지 기록하세요." required class="w-full p-2.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                        </div>
-                        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md transition">
-                            과제/질문 제출하기
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Board Posts List -->
-                <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
-                            <h3 class="font-bold text-slate-800">제출된 탐구 및 답변 목록</h3>
-                            <span class="text-xs text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full font-semibold" id="post-count-badge">0건</span>
-                        </div>
-                        
-                        <div class="space-y-3 max-h-[550px] overflow-y-auto pr-1" id="board-posts-list">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- ================= PAGE 5: TEACHER DASHBOARD ================= -->
-        <section id="page-teacher" class="hidden space-y-6">
-            
-            <!-- Dashboard Banner -->
-            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <span class="text-xs font-bold bg-indigo-500/30 text-indigo-300 border border-indigo-400/30 px-2.5 py-1 rounded-full">
-                        <i class="fa-solid fa-chalkboard-user mr-1"></i>교사 전용 스마트 피드백 시스템
-                    </span>
-                    <h2 class="text-2xl font-bold mt-2">학급 과제 평가 및 질문 답변 관리 대시보드</h2>
-                </div>
-                <button onclick="logoutTeacher()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-xl shadow transition self-start sm:self-auto">
-                    교사 모드 나가기
-                </button>
-            </div>
-
-            <!-- Teacher 3 Sub-Tabs Header -->
-            <div class="flex border-b border-slate-200 space-x-2 bg-white p-2 rounded-2xl shadow-sm border" id="teacher-tabs">
-                <button onclick="setTeacherTab('stats')" id="ttab-stats" class="px-4 py-2.5 rounded-xl font-bold text-xs bg-indigo-600 text-white shadow-sm transition flex items-center">
-                    <i class="fa-solid fa-chart-pie mr-2"></i>1. 학급 현황 및 데이터 (CSV 내보내기)
-                </button>
-                <button onclick="setTeacherTab('eval')" id="ttab-eval" class="px-4 py-2.5 rounded-xl font-medium text-xs text-slate-600 hover:bg-slate-100 transition flex items-center">
-                    <i class="fa-solid fa-stamp mr-2"></i>2. 과제 평가 및 도장/피드백
-                </button>
-                <button onclick="setTeacherTab('qna')" id="ttab-qna" class="px-4 py-2.5 rounded-xl font-medium text-xs text-slate-600 hover:bg-slate-100 transition flex items-center">
-                    <i class="fa-solid fa-comment-dots mr-2"></i>3. 질문 답변(Q&A) 관리
-                </button>
-            </div>
-
-            <!-- TEACHER SUB-TAB 1: Class Stats & CSV Export -->
-            <div id="tcontent-stats" class="space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-slate-400">학급 총 인원</span>
-                        <p class="text-2xl font-extrabold text-slate-800 mt-1">27명</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-indigo-500">과제 제출 완료</span>
-                        <p class="text-2xl font-extrabold text-indigo-600 mt-1" id="teacher-submitted-count">0명</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-emerald-500">학급 제출 참여율</span>
-                        <p class="text-2xl font-extrabold text-emerald-600 mt-1" id="teacher-submit-rate">0%</p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                        <h3 class="font-bold text-slate-800 text-sm flex items-center">
-                            <i class="fa-solid fa-file-csv text-emerald-600 mr-2 text-base"></i>학급 제출 데이터 전체 관리 및 엑셀(CSV) 저장
+                    <!-- Core Goals Widget -->
+                    <div class="lab-card rounded-2xl p-6 bg-gradient-to-br from-white to-sky-50/30 border border-sky-100">
+                        <h3 class="text-base font-bold text-slate-800 mb-4 pb-3 border-b border-slate-100 flex items-center">
+                            <i class="fa-solid fa-bullseye text-teal-500 mr-2"></i> 이번 수업의 핵심 목표
                         </h3>
-                        <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center self-start sm:self-auto">
-                            <i class="fa-solid fa-download mr-1.5"></i>CSV 내보내기 (엑셀 저장)
-                        </button>
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-700">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-circle-check text-sky-500 mt-1 mr-2 text-xs"></i>
+                                <span><strong>입자 운동 이해:</strong> 온도 변화에 따른 입자의 배열과 운동 속도 관찰</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-circle-check text-sky-500 mt-1 mr-2 text-xs"></i>
+                                <span><strong>열에너지 출입:</strong> 융해/기화/승화(열 흡수)와 응고/액화/승화(열 방출) 구분</span>
+                            </li>
+                        </ul>
                     </div>
-                    <p class="text-xs text-slate-500">학생들의 탐구 내용, 평가 도장, 피드백 및 교사 답변 내역이 CSV로 통합 저장됩니다.</p>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Notice Update Widget -->
-                    <div class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <label class="block text-xs font-bold text-slate-700"><i class="fa-solid fa-bullhorn text-indigo-500 mr-1"></i>학급 메인 공지 사항 업데이트</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="teacher-notice-input" placeholder="메인 화면 공지 문구를 입력하세요" class="flex-grow p-2.5 text-xs border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                            <button onclick="addTeacherNotice()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl whitespace-nowrap shadow transition">
-                                공지 등록
+        <!-- INQUIRY GUIDE PAGE (탐구 안내) -->
+        <section id="page-guide" class="page-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                <div>
+                    <span class="text-xs font-bold text-sky-600 bg-sky-100 px-3 py-1 rounded-full uppercase">Inquiry Guide</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-2">탐구 안내 및 단계별 실습 과정</h2>
+                </div>
+
+                <!-- Stage Tabs Navigation -->
+                <div class="flex space-x-2 border-b border-slate-200 pb-2 overflow-x-auto">
+                    <button onclick="switchGuideTab('step1')" id="tab-step1" class="tab-btn active px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center whitespace-nowrap transition">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> 1단계: 주제 파악 & 현상 관찰
+                    </button>
+                    <button onclick="switchGuideTab('step2')" id="tab-step2" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center whitespace-nowrap transition">
+                        <i class="fa-solid fa-sliders mr-2"></i> 2단계: 가상 시뮬레이션 탐구
+                    </button>
+                    <button onclick="switchGuideTab('step3')" id="tab-step3" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center whitespace-nowrap transition">
+                        <i class="fa-solid fa-square-check mr-2"></i> 3단계: 결과 정리 & 보고서 제출
+                    </button>
+                </div>
+
+                <!-- Stage 1 Content -->
+                <div id="content-step1" class="guide-stage-content lab-card rounded-2xl p-6 space-y-4">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">1단계: 일상생활 속 상태 변화 현상 관찰하기</h3>
+                    <p class="text-xs sm:text-sm text-slate-600">얼음물이 담긴 컵 외면에 물방울이 맺히는 현상 등 우리 주변의 변화를 관찰합니다.</p>
+                </div>
+
+                <!-- Stage 2 Content -->
+                <div id="content-step2" class="guide-stage-content lab-card rounded-2xl p-6 space-y-4 hidden">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">2단계: 입자 가상 실험실 조작 및 데이터 수집</h3>
+                    <p class="text-xs sm:text-sm text-slate-600">온도 조절 슬라이더를 통해 입자 배열 및 운동 변화를 실시간 관찰합니다.</p>
+                </div>
+
+                <!-- Stage 3 Content -->
+                <div id="content-step3" class="guide-stage-content lab-card rounded-2xl p-6 space-y-4 hidden">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">3단계: 탐구 보고서 작성 및 동료 피드백</h3>
+                    <p class="text-xs sm:text-sm text-slate-600">실험 결과를 바탕으로 보고서를 등록하고 댓글로의견을 공유합니다.</p>
+                </div>
+
+                <!-- Real-world Examples Carousel Slider -->
+                <div class="lab-card rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center">
+                            <i class="fa-solid fa-images text-teal-500 mr-2"></i> 생활 속 상태 변화 예시 슬라이드
+                        </h3>
+                        <div class="flex space-x-2">
+                            <button onclick="prevSlide()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button onclick="nextSlide()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
                     </div>
+
+                    <!-- Slider Wrapper -->
+                    <div class="relative min-h-[180px]">
+                        <div class="carousel-item active space-y-2">
+                            <div class="p-5 rounded-xl bg-sky-50/70 border border-sky-100">
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-700">승화 (고체 $\rightarrow$ 기체)</span>
+                                <h4 class="text-sm font-bold text-slate-800 mt-2">드라이아이스의 승화</h4>
+                                <p class="text-xs text-slate-600 mt-1">고체 이산화탄소가 열에너지를 흡수하여 직접 기체로 변합니다.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item space-y-2">
+                            <div class="p-5 rounded-xl bg-emerald-50/70 border border-emerald-100">
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700">액화 (기체 $\rightarrow$ 액체)</span>
+                                <h4 class="text-sm font-bold text-slate-800 mt-2">차가운 컵 표면의 이슬 방울</h4>
+                                <p class="text-xs text-slate-600 mt-1">수증기가 차가운 표면에 닿아 열을 방출하고 물방울로 변합니다.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- TEACHER SUB-TAB 2: Assignment Evaluation & Stamps -->
-            <div id="tcontent-eval" class="hidden bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-stamp text-indigo-500 mr-2"></i>학생별 탐구 보고서 도장 부여 및 서술형 피드백</h3>
-                    <span class="text-xs text-slate-400">도장 버튼을 누른 후 [저장]을 클릭하세요</span>
+        <!-- PARTICLE SIMULATION & LEARNING LAB PAGE (입자 가상 실험실) -->
+        <section id="page-sim" class="page-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                
+                <div>
+                    <span class="text-xs font-bold text-sky-600 bg-sky-100 px-3 py-1 rounded-full uppercase">Virtual Particle Lab</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-2">상태 변화 입자 가상 실험실</h2>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                        온도 조절 슬라이더를 움직여 열에너지에 따른 입자의 정렬 및 운동 변화를 관찰해 보세요.
+                    </p>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
-                                <th class="p-3">작성자</th>
-                                <th class="p-3">탐구 내용</th>
-                                <th class="p-3">평가 도장 부여</th>
-                                <th class="p-3">서술 피드백</th>
-                                <th class="p-3 text-right">관리</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teacher-eval-tbody" class="divide-y divide-slate-100 text-slate-700">
-                            <!-- Populated via JS -->
-                        </tbody>
-                    </table>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Left Simulation Canvas & Controls (8 cols) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="lab-card rounded-2xl p-5 bg-white relative">
+                            
+                            <!-- State Header Indicator -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-bold text-slate-500">현재 수식 상태:</span>
+                                    <span id="sim-state-badge" class="px-3 py-1 rounded-full text-xs font-black bg-sky-100 text-sky-700">
+                                        고체 (Solid State)
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center space-x-4 text-xs font-mono">
+                                    <span>평균 온도: <strong id="temp-display" class="text-sky-600 text-sm">-15 °C</strong></span>
+                                    <span>운동 속도: <strong id="speed-display" class="text-slate-800">제자리 진동</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- Main Simulation Canvas Container -->
+                            <div id="sim-canvas-container" class="relative w-full h-80 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-inner">
+                                <canvas id="simCanvas" class="w-full h-full block"></canvas>
+                                
+                                <!-- Heat Glow Overlay Effect -->
+                                <div id="heat-glow" class="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0 bg-gradient-to-t from-rose-600/20 via-transparent to-transparent"></div>
+                            </div>
+
+                            <!-- Interactive Controls Bar -->
+                            <div class="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-700 flex items-center">
+                                        <i class="fa-solid fa-gamepad text-sky-500 mr-1.5"></i> 상태 원클릭 설정:
+                                    </span>
+                                    <div class="flex space-x-2">
+                                        <button onclick="setSimState('solid')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-white shadow-sm hover:bg-sky-600 transition">
+                                            고체 (Solid)
+                                        </button>
+                                        <button onclick="setSimState('liquid')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-sm hover:bg-emerald-600 transition">
+                                            액체 (Liquid)
+                                        </button>
+                                        <button onclick="setSimState('gas')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-500 text-white shadow-sm hover:bg-rose-600 transition">
+                                            기체 (Gas)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Temperature Control Slider -->
+                                <div>
+                                    <div class="flex justify-between items-center mb-1 text-xs">
+                                        <span class="font-bold text-slate-600 flex items-center">
+                                            <i class="fa-solid fa-fire text-rose-500 mr-1"></i> 열에너지 (온도) 조절 슬라이더
+                                        </span>
+                                        <span class="text-slate-400 text-[11px]">좌우로 조절하세요</span>
+                                    </div>
+                                    <input type="range" id="tempRange" min="-50" max="150" value="-15" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                                    <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                                        <span>-50°C (고체 격자)</span>
+                                        <span>0°C (융해점)</span>
+                                        <span>100°C (끓는점)</span>
+                                        <span>150°C (기체 확산)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Right Analysis Panel (4 cols) -->
+                    <div class="lg:col-span-4 space-y-4">
+                        <div class="lab-card rounded-2xl p-5 space-y-4">
+                            <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 flex items-center">
+                                <i class="fa-solid fa-chart-line text-sky-500 mr-2"></i> 실시간 상태 분석
+                            </h3>
+
+                            <div class="space-y-3 text-xs">
+                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
+                                    <span class="text-slate-600">열에너지 상태:</span>
+                                    <span id="thermal-flow-text" class="font-bold text-sky-600">열에너지 적은 상태 (고체)</span>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
+                                    <span class="text-slate-600">입자 간 인력 크기:</span>
+                                    <span id="particle-force-text" class="font-bold text-slate-800">매우 강함 (결합선)</span>
+                                </div>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-sky-50/70 border border-sky-100">
+                                <h4 class="text-xs font-bold text-sky-800 mb-1 flex items-center">
+                                    <i class="fa-solid fa-lightbulb text-amber-400 mr-1.5"></i> 과학 원리 요약
+                                </h4>
+                                <p id="sim-principle-desc" class="text-[11px] text-sky-900 leading-relaxed">
+                                    고체 상태에서는 열에너지가 적어 입자들이 규칙적인 격자를 이루며 제자리 진동을 합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ASSIGNMENT SUBMISSION & Q&A BOARD PAGE -->
+        <section id="page-board" class="page-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-sky-600 bg-sky-100 px-3 py-1 rounded-full uppercase">Board</span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-2">과제 제출 및 질문 게시판</h2>
+                    </div>
+                </div>
+
+                <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Posts -->
                 </div>
             </div>
+        </section>
 
-            <!-- TEACHER SUB-TAB 3: Q&A Answer Management -->
-            <div id="tcontent-qna" class="hidden bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-circle-question text-purple-500 mr-2"></i>학생 질문 답변 작성 (학생 화면 강조 표시)</h3>
-                    <span class="text-xs text-slate-400">작성한 답변은 게시판에서 강조 배지로 표시됩니다</span>
+        <!-- TEACHER DASHBOARD PAGE -->
+        <section id="page-teacher" class="page-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                <div class="bg-gradient-to-r from-purple-900 to-indigo-900 rounded-2xl p-6 text-white shadow-xl flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold bg-purple-500/30 text-purple-200 px-3 py-1 rounded-full border border-purple-400/30">Teacher Dashboard</span>
+                        <h2 class="text-2xl font-bold mt-2">교사 전용 학급 관리 대시보드</h2>
+                    </div>
+                    <button onclick="logoutTeacher()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition">
+                        교사 로그아웃
+                    </button>
                 </div>
 
-                <div id="teacher-qna-list" class="space-y-4">
-                    <!-- Populated via JS -->
+                <div class="lab-card rounded-2xl p-6">
+                    <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">학생 제출 보고서 검토</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">모둠</th>
+                                    <th class="p-3">학생명</th>
+                                    <th class="p-3">제목</th>
+                                    <th class="p-3">상태</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacher-table-body" class="divide-y divide-slate-100">
+                                <!-- Table Content -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
         </section>
 
     </main>
 
-    <!-- TEACHER AUTH MODAL (No Password text shown on UI) -->
-    <div id="auth-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-xl mb-4">
-                <i class="fa-solid fa-user-lock"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-1">교사 전용 대시보드 로그인</h3>
-            <p class="text-xs text-slate-500 mb-4">교사 전용 관리 화면에 접근하기 위해 PIN 비밀번호를 입력하세요.</p>
-            <input type="password" id="pin-input" placeholder="비밀번호 입력" onkeyup="if(event.key==='Enter') verifyTeacherPin()" class="w-full p-3 border border-slate-300 rounded-xl text-center font-mono text-base tracking-widest mb-3 outline-none focus:ring-2 focus:ring-indigo-500">
-            <p id="pin-error" class="text-xs font-semibold text-rose-500 hidden mb-2">비밀번호가 올바르지 않습니다.</p>
-            <button onclick="verifyTeacherPin()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md transition">
-                인증 확인
-            </button>
-        </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION MODAL -->
-    <div id="toast-modal" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center space-x-2 transition-all transform translate-y-20 opacity-0 pointer-events-none">
-        <i class="fa-solid fa-circle-info text-indigo-400 text-sm" id="toast-icon"></i>
-        <span id="toast-message">알림 메시지</span>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200 mt-12 py-6">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
-            <p class="font-medium text-slate-600">중학교 1학년 과학 | 물질의 상태 변화와 열에너지의 관계</p>
-            <p>© 2026 Interactive Science Lab Note. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-bold text-slate-300">중학교 1학년 과학 탐구 가상실험실 - 물질의 상태 변화와 열에너지</p>
+            <p class="text-slate-500">© 2026 Science Lab Interactive. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Firebase SDK Imports & Application Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Configuration - 발급받으신 Config 값을 입력하세요.
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'state-of-matter-lab';
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Global App State Variables
-        window.isTeacherMode = false;
-        window.currentPhenomenon = 'ice';
-        window.processProgress = 0;
-        window.isAutoPlaying = false;
-        window.autoPlayInterval = null;
-        window.postsData = [];
-        window.currentUser = null;
-
-        // Phenomena Configuration Data
-        const PHENOMENA_DATA = {
-            ice: {
-                title: "🧊 얼음이 녹을 때 (융해)",
-                startTemp: -10, endTemp: 30,
-                step1: "1단계: 고체 가열 (진동 증가)",
-                step1Desc: "고체 얼음 상태. 온도가 상승함에 따라 제자리에서 입자 진동이 점점 세집니다.",
-                step2: "2단계: 융해 구간 (결합 무너짐 & 입자 배열 변형)",
-                step2Desc: "상태 변화 구간. 입자 사이 결합이 풀어지며 규칙적 배열이 해체되고 서로 미끄러지기 시작합니다.",
-                step3: "3단계: 액체 물 완료",
-                step3Desc: "완전한 액체 물 상태. 입자들이 비교적 넓은 영역에서 활발히 위치를 바꾸며 이동합니다.",
-                teacherTip: "융해 구간에서 온도 상승이 멈추고 입자 결합 해체에 열이 쓰이는 모습을 유심히 관찰하세요!",
-                color: "#38BDF8"
-            },
-            water: {
-                title: "♨️ 물이 끓어 수증기가 될 때 (기화)",
-                startTemp: 20, endTemp: 120,
-                step1: "1단계: 액체 가열 (이동 활발)",
-                step1Desc: "액체 물 상태. 가열될수록 입자들이 미끄러지듯 움직이는 속도가 훨씬 빨라집니다.",
-                step2: "2단계: 기화 구간 (입자 거리 급격히 확대)",
-                step2Desc: "상태 변화 구간. 입자들이 서로의 끌어당기는 힘을 끊어내고 표면과 내부에서 튀어나갑니다.",
-                step3: "3단계: 기체 수증기 완료",
-                step3Desc: "완전한 기체 상태. 입자 간 거리가 매우 멀어지고 사방으로 격렬하게 날아다닙니다.",
-                teacherTip: "액체 표면뿐 아니라 내부에서도 입자가 튀어나가는 끓음(기화) 현상을 확인해보세요!",
-                color: "#818CF8"
-            },
-            dew: {
-                title: "💧 차가운 컵에 이슬이 맺힐 때 (액화)",
-                startTemp: 80, endTemp: 10,
-                step1: "1단계: 기체 수증기 냉각 (속도 감소)",
-                step1Desc: "공기 중의 수증기. 차가운 컵 표면에 닿아 열에너지를 빼앗기면서 입자 속도가 느려집니다.",
-                step2: "2단계: 액화 구간 (입자 모여들기)",
-                step2Desc: "상태 변화 구간. 속도가 느려진 기체 입자들이 서로의 끌어당기는 힘에 의해 뭉치기 시작합니다.",
-                step3: "3단계: 액체 물방울 형성",
-                step3Desc: "완전한 액체 이슬 방울. 입자들이 서로 모여 컵 표면에 물방울 배열을 이룹니다.",
-                teacherTip: "열을 '방출(냉각)'하면서 날아다니던 입자들이 차분하게 뭉쳐지는 모습을 비교해 보세요!",
-                color: "#34D399"
-            },
-            dryice: {
-                title: "💨 드라이아이스가 사라질 때 (승화)",
-                startTemp: -78, endTemp: 25,
-                step1: "1단계: 고체 이산화탄소 가열",
-                step1Desc: "드라이아이스 고체 상태. 매우 치밀하게 뭉쳐진 입자들이 열을 흡수하며 심하게 진동합니다.",
-                step2: "2단계: 승화 구간 (고체에서 기체로 즉시 확산)",
-                step2Desc: "상태 변화 구간. 액체 단계를 거치지 않고 고체 입자가 직접 공간 전체로 튀어나가 확산합니다.",
-                step3: "3단계: 기체 이산화탄소 분산",
-                step3Desc: "완전한 기체 상태. 입자들이 엄청난 속도로 용기 전체로 순식간에 퍼져나갑니다.",
-                teacherTip: "액체 상태를 거치지 않고 고체 입자가 직접 기체로 날아가는 극적인 거리 확대를 보세요!",
-                color: "#FB7185"
-            }
-        };
-
-        async function initAuthAndDb() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    const cred = await signInWithCustomToken(auth, __initial_auth_token);
-                    window.currentUser = cred.user;
-                } else {
-                    const cred = await signInAnonymously(auth);
-                    window.currentUser = cred.user;
+    <script>
+        // Global State
+        const state = {
+            currentPage: 'landing',
+            role: 'student',
+            guideTab: 'step1',
+            currentSlide: 0,
+            simTemp: -15,
+            posts: [
+                {
+                    id: 1,
+                    author: '이민준',
+                    team: '1모둠',
+                    type: '융해 (열 흡수)',
+                    title: '여름철 아이스크림이 녹아서 흐르는 이유',
+                    content: '아이스크림(고체)이 따뜻한 공기 중에서 열에너지를 흡수하면 입자 진동이 활발해지며 고체에서 액체로 상태 변화가 일어납니다.',
+                    status: '우수 보고서'
                 }
-            } catch (e) {
-                console.warn("Custom token auth failed, trying anonymous auth:", e);
-                try {
-                    const cred = await signInAnonymously(auth);
-                    window.currentUser = cred.user;
-                } catch(err) {
-                    console.error("Firebase auth failed:", err);
+            ]
+        };
+
+        // PARTICLE PHYSICS SIMULATOR CLASS
+        class ParticleSimulator {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.numParticles = 48;
+                this.temperature = -15;
+                this.width = 0;
+                this.height = 0;
+
+                // Robust ResizeObserver setup
+                if (window.ResizeObserver && this.canvas.parentElement) {
+                    this.resizeObserver = new ResizeObserver(() => this.resize());
+                    this.resizeObserver.observe(this.canvas.parentElement);
+                }
+
+                this.init();
+            }
+
+            init() {
+                this.particles = [];
+                for (let i = 0; i < this.numParticles; i++) {
+                    const vx = (Math.random() - 0.5) * 3;
+                    const vy = (Math.random() - 0.5) * 3;
+                    this.particles.push({
+                        x: 0,
+                        y: 0,
+                        vx: vx === 0 ? 1 : vx,
+                        vy: vy === 0 ? -1 : vy,
+                        baseX: 0,
+                        baseY: 0,
+                        radius: 7.5,
+                        color: '#38BDF8',
+                        gridRow: 0,
+                        gridCol: 0
+                    });
+                }
+
+                this.resize();
+                this.animate();
+            }
+
+            resize() {
+                if (!this.canvas || !this.canvas.parentElement) return;
+                const rect = this.canvas.parentElement.getBoundingClientRect();
+                const w = Math.floor(rect.width || this.canvas.parentElement.clientWidth);
+                const h = Math.floor(rect.height || this.canvas.parentElement.clientHeight);
+
+                if (w > 0 && h > 0) {
+                    const sizeChanged = (this.width !== w || this.height !== h);
+                    this.width = w;
+                    this.height = h;
+                    this.canvas.width = w;
+                    this.canvas.height = h;
+
+                    if (sizeChanged || this.particles[0].baseX === 0) {
+                        this.setupGridPositions();
+                        this.resetParticlesIfNeeded();
+                    }
                 }
             }
 
-            if (window.currentUser) {
-                subscribeRealtimeData();
-            }
-        }
-
-        function subscribeRealtimeData() {
-            // Subscribe to Posts collection
-            const postsCol = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-            onSnapshot(postsCol, (snapshot) => {
-                let list = [];
-                snapshot.forEach(docSnap => {
-                    list.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                window.postsData = list;
-                window.renderPosts();
-                window.renderTeacherTables();
-            }, (error) => {
-                console.error("Firestore Posts Subscription Error:", error);
-            });
-
-            // Subscribe to Notices collection
-            const noticesCol = collection(db, 'artifacts', appId, 'public', 'data', 'notices');
-            onSnapshot(noticesCol, (snapshot) => {
-                let notices = [];
-                snapshot.forEach(docSnap => {
-                    notices.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                notices.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                window.renderNotices(notices);
-            }, (error) => {
-                console.error("Firestore Notices Subscription Error:", error);
-            });
-        }
-
-        window.switchPage = function(pageId) {
-            const pages = ['home', 'guide', 'sim', 'board', 'teacher'];
-            pages.forEach(p => {
-                const el = document.getElementById(`page-${p}`);
-                if(el) el.classList.add('hidden');
-                const navBtn = document.getElementById(`nav-${p}`);
-                if(navBtn) navBtn.classList.remove('text-indigo-600', 'font-semibold', 'bg-slate-100');
-            });
-
-            const targetPage = document.getElementById(`page-${pageId}`);
-            if(targetPage) targetPage.classList.remove('hidden');
-
-            const activeNav = document.getElementById(`nav-${pageId}`);
-            if(activeNav) activeNav.classList.add('text-indigo-600', 'font-semibold', 'bg-slate-100');
-
-            if(pageId === 'sim') {
-                setTimeout(resizePhenomCanvas, 50);
-            }
-        };
-
-        window.toggleMobileMenu = function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        };
-
-        window.openAuthModal = function() {
-            if(window.isTeacherMode) {
-                window.switchPage('teacher');
-                return;
-            }
-            document.getElementById('pin-input').value = '';
-            document.getElementById('pin-error').classList.add('hidden');
-            document.getElementById('auth-modal').classList.remove('hidden');
-        };
-
-        window.closeAuthModal = function() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        };
-
-        window.verifyTeacherPin = function() {
-            const pin = document.getElementById('pin-input').value;
-            if(pin === '0725') {
-                window.isTeacherMode = true;
-                window.closeAuthModal();
-                updateUserBadge();
-                window.switchPage('teacher');
-                showToast("교사 모드로 인증되었습니다!");
-            } else {
-                document.getElementById('pin-error').classList.remove('hidden');
-            }
-        };
-
-        window.logoutTeacher = function() {
-            window.isTeacherMode = false;
-            updateUserBadge();
-            window.switchPage('home');
-            showToast("교사 모드가 종료되었습니다.");
-        };
-
-        function updateUserBadge() {
-            const badge = document.getElementById('role-badge');
-            const switchBtn = document.getElementById('teacher-switch-btn');
-            const mobileTeacher = document.getElementById('mobile-teacher-link');
-
-            if(window.isTeacherMode) {
-                badge.className = "px-2.5 py-1 text-xs rounded-full font-semibold bg-indigo-600 text-white flex items-center shadow-xs";
-                badge.innerHTML = `<i class="fa-solid fa-chalkboard-user mr-1"></i>교사 모드`;
-                switchBtn.innerHTML = `<i class="fa-solid fa-table-columns mr-1"></i>교사 대시보드`;
-                mobileTeacher.classList.remove('hidden');
-            } else {
-                badge.className = "px-2.5 py-1 text-xs rounded-full font-semibold bg-sky-100 text-sky-700 border border-sky-200 flex items-center";
-                badge.innerHTML = `<i class="fa-solid fa-user-graduate mr-1"></i>학생 모드`;
-                switchBtn.innerHTML = `<i class="fa-solid fa-lock mr-1"></i>교사 인증`;
-                mobileTeacher.classList.add('hidden');
-            }
-        }
-
-        window.showToast = function(msg) {
-            const modal = document.getElementById('toast-modal');
-            const text = document.getElementById('toast-message');
-            text.innerText = msg;
-            modal.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                modal.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-            }, 3000);
-        };
-
-        window.setGuideTab = function(step) {
-            for(let i=1; i<=3; i++) {
-                const btn = document.getElementById(`gtab-${i}`);
-                const content = document.getElementById(`gcontent-${i}`);
-                if(i === step) {
-                    btn.className = "px-4 py-2.5 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap";
-                    content.classList.remove('hidden');
-                } else {
-                    btn.className = "px-4 py-2.5 font-medium text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-700 whitespace-nowrap";
-                    content.classList.add('hidden');
-                }
-            }
-        };
-
-        let phenomCanvas, phenomCtx;
-        let heroCanvas, heroCtx;
-        let simParticles = [];
-        let heroParticles = [];
-
-        function initCanvases() {
-            phenomCanvas = document.getElementById('phenom-canvas');
-            phenomCtx = phenomCanvas.getContext('2d');
-            heroCanvas = document.getElementById('hero-canvas');
-            heroCtx = heroCanvas.getContext('2d');
-
-            resizePhenomCanvas();
-            initHeroParticles();
-            requestAnimationFrame(renderLoop);
-        }
-
-        function resizePhenomCanvas() {
-            if(phenomCanvas && phenomCanvas.parentElement) {
-                phenomCanvas.width = phenomCanvas.parentElement.clientWidth;
-                phenomCanvas.height = phenomCanvas.parentElement.clientHeight;
-                initSimParticles();
-            }
-            if(heroCanvas && heroCanvas.parentElement) {
-                heroCanvas.width = heroCanvas.parentElement.clientWidth;
-                heroCanvas.height = heroCanvas.parentElement.clientHeight;
-            }
-        }
-
-        function initSimParticles() {
-            simParticles = [];
-            const count = 36;
-            const width = phenomCanvas.width || 350;
-            const height = phenomCanvas.height || 250;
-
-            const cols = 6;
-            const startX = width / 2 - 60;
-            const startY = height / 2 - 60;
-
-            for(let i=0; i<count; i++) {
-                const r = Math.floor(i / cols);
-                const c = i % cols;
-                simParticles.push({
-                    x: startX + c * 24,
-                    y: startY + r * 24,
-                    baseX: startX + c * 24,
-                    baseY: startY + r * 24,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    radius: 7
+            resetParticlesIfNeeded() {
+                if (this.width <= 0 || this.height <= 0) return;
+                this.particles.forEach(p => {
+                    if (isNaN(p.x) || isNaN(p.y) || p.x <= 0 || p.x >= this.width || p.y <= 0 || p.y >= this.height) {
+                        p.x = p.baseX || (this.width / 2);
+                        p.y = p.baseY || (this.height / 2);
+                    }
                 });
             }
-        }
 
-        function initHeroParticles() {
-            heroParticles = [];
-            for(let i=0; i<25; i++) {
-                heroParticles.push({
-                    x: Math.random() * 280,
-                    y: Math.random() * 180,
-                    vx: (Math.random() - 0.5) * 2.5,
-                    vy: (Math.random() - 0.5) * 2.5,
-                    radius: 5 + Math.random() * 3,
-                    color: i % 2 === 0 ? '#74B9FF' : '#FF7675'
-                });
-            }
-        }
-
-        window.selectPhenomenon = function(key) {
-            window.currentPhenomenon = key;
-            const keys = ['ice', 'water', 'dew', 'dryice'];
-            keys.forEach(k => {
-                const btn = document.getElementById(`pbtn-${k}`);
-                if(k === key) {
-                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm transition flex items-center justify-center";
-                } else {
-                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center justify-center";
-                }
-            });
-
-            const data = PHENOMENA_DATA[key];
-            document.getElementById('phenom-title-label').innerText = `${data.title} 과정`;
-            document.getElementById('phenom-teacher-tip').innerText = data.teacherTip;
-            document.getElementById('step-text-1').innerText = data.step1Desc;
-            document.getElementById('step-text-2').innerText = data.step2Desc;
-            document.getElementById('step-text-3').innerText = data.step3Desc;
-
-            window.resetProcess();
-        };
-
-        window.onProcessSliderChange = function(val) {
-            window.processProgress = parseInt(val);
-            updateProcessUI();
-        };
-
-        window.jumpToPhase = function(val) {
-            document.getElementById('phenom-slider').value = val;
-            window.onProcessSliderChange(val);
-        };
-
-        window.resetProcess = function() {
-            if(window.isAutoPlaying) window.toggleAutoPlay();
-            window.jumpToPhase(0);
-        };
-
-        window.toggleAutoPlay = function() {
-            window.isAutoPlaying = !window.isAutoPlaying;
-            const btnText = document.getElementById('play-btn-text');
-            const icon = document.getElementById('play-icon');
-
-            if(window.isAutoPlaying) {
-                btnText.innerText = "일시정지";
-                icon.className = "fa-solid fa-pause mr-1.5";
-                if(window.processProgress >= 100) window.processProgress = 0;
+            setupGridPositions() {
+                if (this.width <= 0 || this.height <= 0) return;
+                const cols = 8;
+                const rows = 6;
+                const spacingX = Math.min(22, Math.floor(this.width / 12));
+                const spacingY = Math.min(22, Math.floor(this.height / 10));
+                const gridWidth = (cols - 1) * spacingX;
+                const gridHeight = (rows - 1) * spacingY;
                 
-                window.autoPlayInterval = setInterval(() => {
-                    window.processProgress += 1;
-                    if(window.processProgress > 100) {
-                        window.processProgress = 100;
-                        window.toggleAutoPlay();
-                    }
-                    document.getElementById('phenom-slider').value = window.processProgress;
-                    updateProcessUI();
-                }, 80);
-            } else {
-                btnText.innerText = "자동 재생";
-                icon.className = "fa-solid fa-play mr-1.5";
-                clearInterval(window.autoPlayInterval);
-            }
-        };
+                const startX = (this.width - gridWidth) / 2;
+                const startY = Math.max(20, this.height - gridHeight - 25);
 
-        function updateProcessUI() {
-            const data = PHENOMENA_DATA[window.currentPhenomenon];
-            document.getElementById('phenom-percent-label').innerText = `진행도: ${window.processProgress}%`;
-
-            const calcTemp = Math.round(data.startTemp + (data.endTemp - data.startTemp) * (window.processProgress / 100));
-            document.getElementById('phase-temp-disp').innerText = `온도: ${calcTemp}°C`;
-
-            const card1 = document.getElementById('step-card-1');
-            const card2 = document.getElementById('step-card-2');
-            const card3 = document.getElementById('step-card-3');
-            const titleEl = document.getElementById('phase-title');
-            const descEl = document.getElementById('phase-part-desc');
-
-            card1.className = "p-3 bg-white/70 rounded-xl border border-slate-200 shadow-xs transition opacity-60";
-            card2.className = "p-3 bg-white/70 rounded-xl border border-slate-200 shadow-xs transition opacity-60";
-            card3.className = "p-3 bg-white/70 rounded-xl border border-slate-200 shadow-xs transition opacity-60";
-
-            if(window.processProgress < 35) {
-                card1.className = "p-3 bg-white rounded-xl border border-indigo-300 ring-2 ring-indigo-100 shadow-xs transition opacity-100";
-                titleEl.innerText = data.step1;
-                titleEl.className = "font-extrabold text-sky-300";
-                descEl.innerText = "초기 상태. 가열/냉각에 따라 정렬된 입자의 진동속도가 가속/감소합니다.";
-            } else if(window.processProgress < 75) {
-                card2.className = "p-3 bg-white rounded-xl border border-amber-300 ring-2 ring-amber-100 shadow-xs transition opacity-100";
-                titleEl.innerText = data.step2;
-                titleEl.className = "font-extrabold text-amber-300";
-                descEl.innerText = "상태 변화 진행 중! 결합 구도가 무너지며 입자 간 배치가 급변합니다.";
-            } else {
-                card3.className = "p-3 bg-white rounded-xl border border-emerald-300 ring-2 ring-emerald-100 shadow-xs transition opacity-100";
-                titleEl.innerText = data.step3;
-                titleEl.className = "font-extrabold text-emerald-300";
-                descEl.innerText = "상태 변화 완료. 새로 형성된 상태의 입자 운동 및 거리 유지가 고착됩니다.";
-            }
-        }
-
-        function renderLoop() {
-            if(heroCtx && heroCanvas) {
-                heroCtx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
-                heroParticles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    if(p.x < 10 || p.x > heroCanvas.width - 10) p.vx *= -1;
-                    if(p.y < 10 || p.y > heroCanvas.height - 10) p.vy *= -1;
-
-                    heroCtx.beginPath();
-                    heroCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    heroCtx.fillStyle = p.color;
-                    heroCtx.fill();
+                this.particles.forEach((p, idx) => {
+                    const c = idx % cols;
+                    const r = Math.floor(idx / cols);
+                    p.gridCol = c;
+                    p.gridRow = r;
+                    p.baseX = startX + c * spacingX;
+                    p.baseY = startY + r * spacingY;
                 });
             }
 
-            if(phenomCtx && phenomCanvas) {
-                phenomCtx.clearRect(0, 0, phenomCanvas.width, phenomCanvas.height);
+            setTemperature(temp) {
+                this.temperature = temp;
+            }
 
-                const data = PHENOMENA_DATA[window.currentPhenomenon];
-                const ratio = window.processProgress / 100;
-                const width = phenomCanvas.width;
-                const height = phenomCanvas.height;
+            animate() {
+                requestAnimationFrame(() => this.animate());
 
-                simParticles.forEach((p, idx) => {
-                    let drawX = p.x;
-                    let drawY = p.y;
+                if (this.width <= 0 || this.height <= 0) {
+                    this.resize();
+                    if (this.width <= 0 || this.height <= 0) return;
+                }
 
-                    if(window.currentPhenomenon === 'ice') {
-                        if(ratio < 0.35) {
-                            const jitter = ratio * 8 + 1;
-                            drawX = p.baseX + (Math.random() - 0.5) * jitter;
-                            drawY = p.baseY + (Math.random() - 0.5) * jitter;
-                        } else if(ratio < 0.75) {
-                            p.x += p.vx * 1.2;
-                            p.y += p.vy * 1.2;
-                            if(p.x < width*0.2 || p.x > width*0.8) p.vx *= -1;
-                            if(p.y < height*0.4 || p.y > height*0.85) p.vy *= -1;
-                            drawX = p.x; drawY = p.y;
-                        } else {
-                            p.x += p.vx * 2.2;
-                            p.y += p.vy * 2.2;
-                            if(p.x < 20 || p.x > width - 20) p.vx *= -1;
-                            if(p.y < height * 0.45 || p.y > height - 20) p.vy *= -1;
-                            drawX = p.x; drawY = p.y;
-                        }
-                    } else if(window.currentPhenomenon === 'water') {
-                        const speedMult = 1 + ratio * 3.5;
-                        p.x += p.vx * speedMult;
-                        p.y += p.vy * speedMult;
+                this.ctx.clearRect(0, 0, this.width, this.height);
 
-                        const boundaryY = Math.max(20, height * (0.5 - ratio * 0.45));
-                        if(p.x < 20 || p.x > width - 20) p.vx *= -1;
-                        if(p.y < boundaryY || p.y > height - 20) p.vy *= -1;
-                        drawX = p.x; drawY = p.y;
-                    } else if(window.currentPhenomenon === 'dew') {
-                        const speedMult = Math.max(0.4, 3.5 - ratio * 3);
-                        p.x += p.vx * speedMult;
-                        p.y += p.vy * speedMult;
+                let speedMultiplier = 1;
+                let stateType = 'solid';
 
-                        if(ratio > 0.7) {
-                            const targetX = width / 2 + (idx % 6 - 3) * 18;
-                            const targetY = height * 0.7 + Math.floor(idx / 6) * 18;
-                            p.x += (targetX - p.x) * 0.05;
-                            p.y += (targetY - p.y) * 0.05;
-                        } else {
-                            if(p.x < 20 || p.x > width - 20) p.vx *= -1;
-                            if(p.y < 20 || p.y > height - 20) p.vy *= -1;
-                        }
-                        drawX = p.x; drawY = p.y;
-                    } else if(window.currentPhenomenon === 'dryice') {
-                        if(ratio < 0.3) {
-                            const jitter = ratio * 10 + 1;
-                            drawX = p.baseX + (Math.random() - 0.5) * jitter;
-                            drawY = p.baseY + (Math.random() - 0.5) * jitter;
-                        } else {
-                            const speedMult = ratio * 5;
-                            p.x += p.vx * speedMult;
-                            p.y += p.vy * speedMult;
-                            if(p.x < 15 || p.x > width - 15) p.vx *= -1;
-                            if(p.y < 15 || p.y > height - 15) p.vy *= -1;
-                            drawX = p.x; drawY = p.y;
+                if (this.temperature < 0) {
+                    stateType = 'solid';
+                    speedMultiplier = 0.15 + (this.temperature + 50) / 150;
+                } else if (this.temperature <= 100) {
+                    stateType = 'liquid';
+                    speedMultiplier = 0.8 + (this.temperature / 60);
+                } else {
+                    stateType = 'gas';
+                    speedMultiplier = 2.2 + (this.temperature - 100) / 15;
+                }
+
+                // Attraction force lines in Solid & Liquid
+                if (stateType === 'solid') {
+                    this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+                    this.ctx.lineWidth = 1.2;
+                    for (let i = 0; i < this.particles.length; i++) {
+                        for (let j = i + 1; j < this.particles.length; j++) {
+                            const p1 = this.particles[i];
+                            const p2 = this.particles[j];
+                            const dx = p1.x - p2.x;
+                            const dy = p1.y - p2.y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 28) {
+                                this.ctx.beginPath();
+                                this.ctx.moveTo(p1.x, p1.y);
+                                this.ctx.lineTo(p2.x, p2.y);
+                                this.ctx.stroke();
+                            }
                         }
                     }
+                } else if (stateType === 'liquid') {
+                    this.ctx.strokeStyle = 'rgba(52, 211, 153, 0.25)';
+                    this.ctx.lineWidth = 0.8;
+                    for (let i = 0; i < this.particles.length; i++) {
+                        for (let j = i + 1; j < this.particles.length; j++) {
+                            const p1 = this.particles[i];
+                            const p2 = this.particles[j];
+                            const dx = p1.x - p2.x;
+                            const dy = p1.y - p2.y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 24) {
+                                this.ctx.beginPath();
+                                this.ctx.moveTo(p1.x, p1.y);
+                                this.ctx.lineTo(p2.x, p2.y);
+                                this.ctx.stroke();
+                            }
+                        }
+                    }
+                }
 
-                    phenomCtx.beginPath();
-                    phenomCtx.arc(drawX, drawY, p.radius, 0, Math.PI * 2);
-                    phenomCtx.fillStyle = data.color;
-                    phenomCtx.fill();
-                    phenomCtx.lineWidth = 1.5;
-                    phenomCtx.strokeStyle = '#FFFFFF';
-                    phenomCtx.stroke();
+                // Update particle positions
+                this.particles.forEach((p) => {
+                    if (stateType === 'solid') {
+                        p.color = '#38BDF8';
+                        const vib = Math.max(0.2, speedMultiplier * 2);
+                        const targetX = p.baseX + (Math.random() - 0.5) * vib;
+                        const targetY = p.baseY + (Math.random() - 0.5) * vib;
+                        
+                        p.x += (targetX - p.x) * 0.18;
+                        p.y += (targetY - p.y) * 0.18;
+                    } else if (stateType === 'liquid') {
+                        p.color = '#34D399';
+                        p.x += p.vx * speedMultiplier;
+                        p.y += p.vy * speedMultiplier;
+
+                        p.vy += 0.12; // Bottom settling gravity
+                        p.vx *= 0.98;
+                        p.vy *= 0.98;
+                        p.vx += (Math.random() - 0.5) * 0.3;
+
+                        const topLimit = this.height * 0.45;
+                        if (p.x < p.radius + 8) { p.x = p.radius + 8; p.vx = Math.abs(p.vx); }
+                        if (p.x > this.width - p.radius - 8) { p.x = this.width - p.radius - 8; p.vx = -Math.abs(p.vx); }
+                        if (p.y > this.height - p.radius - 8) { p.y = this.height - p.radius - 8; p.vy = -Math.abs(p.vy) * 0.4; }
+                        if (p.y < topLimit) { p.y = topLimit; p.vy = Math.abs(p.vy) * 0.5; }
+                    } else {
+                        p.color = '#F87171';
+                        p.x += p.vx * speedMultiplier;
+                        p.y += p.vy * speedMultiplier;
+
+                        if (p.x < p.radius + 6) { p.x = p.radius + 6; p.vx = Math.abs(p.vx); }
+                        if (p.x > this.width - p.radius - 6) { p.x = this.width - p.radius - 6; p.vx = -Math.abs(p.vx); }
+                        if (p.y < p.radius + 6) { p.y = p.radius + 6; p.vy = Math.abs(p.vy); }
+                        if (p.y > this.height - p.radius - 6) { p.y = this.height - p.radius - 6; p.vy = -Math.abs(p.vy); }
+                    }
+
+                    // Render particle circle
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.shadowBlur = 6;
+                    this.ctx.shadowColor = p.color;
+                    this.ctx.fill();
+                    this.ctx.shadowBlur = 0;
+                });
+            }
+        }
+
+        let mainSim, heroSim;
+
+        window.onload = function () {
+            heroSim = new ParticleSimulator('heroCanvas');
+            mainSim = new ParticleSimulator('simCanvas');
+
+            const tempRange = document.getElementById('tempRange');
+            if (tempRange) {
+                tempRange.addEventListener('input', (e) => {
+                    const temp = parseInt(e.target.value);
+                    updateSimParameters(temp);
                 });
             }
 
-            requestAnimationFrame(renderLoop);
+            renderPosts();
+            renderTeacherDashboard();
         }
 
-        window.checkQuiz = function(qNum, correctVal) {
-            const sel = document.getElementById(`q${qNum}-select`).value;
-            const resultEl = document.getElementById(`q${qNum}-result`);
-            resultEl.classList.remove('hidden');
-
-            if(sel === correctVal) {
-                resultEl.className = "text-[11px] font-semibold mt-2 text-emerald-600";
-                resultEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i>정답입니다! 훌륭하게 이해하셨네요.`;
+        // NAVIGATION LOGIC
+        function switchPage(pageId) {
+            state.currentPage = pageId;
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            
+            const header = document.getElementById('main-header');
+            if (pageId === 'landing') {
+                header.classList.add('hidden');
+                document.getElementById('page-landing').classList.remove('hidden');
             } else {
-                resultEl.className = "text-[11px] font-semibold mt-2 text-rose-500";
-                resultEl.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i>다시 시도해 보세요!`;
-            }
-        };
-
-        window.handleBoardSubmit = async function(e) {
-            e.preventDefault();
-            const author = document.getElementById('sub-author').value.trim();
-            const category = document.getElementById('sub-category').value;
-            const title = document.getElementById('sub-title').value.trim();
-            const content = document.getElementById('sub-content').value.trim();
-
-            if(!author || !title || !content) return;
-
-            try {
-                const postsCol = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-                await addDoc(postsCol, {
-                    author,
-                    category,
-                    title,
-                    content,
-                    date: new Date().toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }),
-                    createdAt: Date.now(),
-                    stamp: "",
-                    feedback: "",
-                    teacherAnswer: ""
-                });
-                document.getElementById('submission-form').reset();
-                window.showToast("탐구 보고서가 DB에 성공적으로 저장되었습니다!");
-            } catch(err) {
-                console.error("Firebase submit error:", err);
-                window.showToast("제출 중 오류가 발생했습니다.");
-            }
-        };
-
-        window.renderPosts = function() {
-            const posts = window.postsData || [];
-            const container = document.getElementById('board-posts-list');
-            const badge = document.getElementById('post-count-badge');
-            
-            if(badge) badge.innerText = `${posts.length}건 제출됨`;
-
-            if(posts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">제출된 탐구 및 질문이 없습니다.</p>`;
-                return;
+                header.classList.remove('hidden');
+                const target = document.getElementById(`page-${pageId}`);
+                if (target) target.classList.remove('hidden');
             }
 
-            container.innerHTML = posts.map(p => `
-                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold text-xs text-indigo-700">${escapeHtml(p.author)}</span>
-                            <span class="text-[10px] px-2 py-0.5 rounded font-semibold ${p.category==='개념질문'?'bg-purple-100 text-purple-700':'bg-sky-100 text-sky-700'}">${p.category || '실험보고서'}</span>
-                        </div>
-                        <span class="text-[10px] text-slate-400">${p.date}</span>
-                    </div>
-
-                    <h4 class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHtml(p.title)}</h4>
-                    <p class="text-xs text-slate-600 leading-relaxed">${escapeHtml(p.content)}</p>
-
-                    ${p.stamp ? `
-                        <div class="inline-flex items-center space-x-1 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-xs font-bold mt-1">
-                            <span>${p.stamp}</span>
-                        </div>
-                    ` : ''}
-
-                    ${p.feedback ? `
-                        <div class="mt-2 p-2.5 bg-indigo-50/80 border border-indigo-100 rounded-xl text-xs space-y-0.5">
-                            <span class="font-bold text-indigo-900 block"><i class="fa-solid fa-pen-nib mr-1 text-indigo-600"></i>선생님 개별 피드백</span>
-                            <p class="text-slate-700">${escapeHtml(p.feedback)}</p>
-                        </div>
-                    ` : ''}
-
-                    ${p.teacherAnswer ? `
-                        <div class="mt-2 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl text-xs space-y-1 shadow-xs">
-                            <span class="font-extrabold text-purple-800 flex items-center">
-                                <i class="fa-solid fa-star text-amber-500 mr-1.5"></i>✨ 공식 선생님 답변
-                            </span>
-                            <p class="text-slate-800 font-medium leading-relaxed">${escapeHtml(p.teacherAnswer)}</p>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        };
-
-        window.renderNotices = function(notices) {
-            const list = document.getElementById('notice-list');
-            if(!list) return;
-
-            if(notices.length === 0) {
-                list.innerHTML = `
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="font-bold text-indigo-600 text-xs"><i class="fa-solid fa-star mr-1"></i>선생님 안내</span>
-                            <span class="text-[11px] text-slate-400">안내</span>
-                        </div>
-                        <p class="text-slate-700 text-xs sm:text-sm font-medium">
-                            [오늘의 탐구 미션] 4가지 일상 현상 시뮬레이션을 재생해 보고, '상태 변화 구간'에서 입자 배열이 어떻게 변하는지 질문/제출란에 기록하세요.
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-
-            list.innerHTML = notices.map(n => `
-                <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-sm mb-2">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="font-bold text-indigo-600 text-xs"><i class="fa-solid fa-bell mr-1"></i>학급 공지</span>
-                        <span class="text-[11px] text-slate-400">${n.date || ''}</span>
-                    </div>
-                    <p class="text-slate-700 text-xs sm:text-sm font-medium">${escapeHtml(n.text)}</p>
-                </div>
-            `).join('');
-        };
-
-        window.setTeacherTab = function(tabKey) {
-            const tabs = ['stats', 'eval', 'qna'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`ttab-${t}`);
-                const content = document.getElementById(`tcontent-${t}`);
-                if(t === tabKey) {
-                    btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs bg-indigo-600 text-white shadow-sm transition flex items-center";
-                    content.classList.remove('hidden');
-                } else {
-                    btn.className = "px-4 py-2.5 rounded-xl font-medium text-xs text-slate-600 hover:bg-slate-100 transition flex items-center";
-                    content.classList.add('hidden');
-                }
+            // Update Nav Active State
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.classList.remove('text-sky-600', 'bg-sky-50', 'font-bold');
             });
-        };
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if (activeNav) activeNav.classList.add('text-sky-600', 'bg-sky-50', 'font-bold');
 
-        window.renderTeacherTables = function() {
-            const posts = window.postsData || [];
+            // Trigger Sim Canvas Resize
+            setTimeout(() => {
+                if (pageId === 'home' && heroSim) heroSim.resize();
+                if (pageId === 'sim' && mainSim) mainSim.resize();
+            }, 60);
 
-            const countEl = document.getElementById('teacher-submitted-count');
-            const rateEl = document.getElementById('teacher-submit-rate');
-            if(countEl) countEl.innerText = `${posts.length}명`;
-            if(rateEl) rateEl.innerText = `${Math.round((posts.length / 27) * 100)}%`;
-
-            const evalTbody = document.getElementById('teacher-eval-tbody');
-            if(evalTbody) {
-                if(posts.length === 0) {
-                    evalTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">제출된 내역이 없습니다.</td></tr>`;
-                } else {
-                    evalTbody.innerHTML = posts.map(p => `
-                        <tr>
-                            <td class="p-3 font-semibold text-slate-800 whitespace-nowrap">${escapeHtml(p.author)}</td>
-                            <td class="p-3 max-w-xs">
-                                <div class="font-bold text-slate-800">${escapeHtml(p.title)}</div>
-                                <div class="text-slate-500 truncate">${escapeHtml(p.content)}</div>
-                            </td>
-                            <td class="p-3 whitespace-nowrap">
-                                <select id="stamp-sel-${p.id}" class="p-1.5 text-xs border border-slate-300 rounded-lg bg-white font-medium">
-                                    <option value="" ${!p.stamp?'selected':''}>-- 도장 선택 --</option>
-                                    <option value="💯 완벽해요" ${p.stamp==='💯 완벽해요'?'selected':''}>💯 완벽해요</option>
-                                    <option value="👏 참 잘했어요" ${p.stamp==='👏 참 잘했어요'?'selected':''}>👏 참 잘했어요</option>
-                                    <option value="👍 보통이에요" ${p.stamp==='👍 보통이에요'?'selected':''}>👍 보통이에요</option>
-                                    <option value="💡 보완 필요" ${p.stamp==='💡 보완 필요'?'selected':''}>💡 보완 필요</option>
-                                </select>
-                            </td>
-                            <td class="p-3 min-w-[200px]">
-                                <input type="text" id="fb-input-${p.id}" value="${escapeHtml(p.feedback || '')}" placeholder="서술 피드백..." class="w-full p-1.5 text-xs border rounded-lg outline-none focus:ring-1 focus:ring-indigo-500">
-                            </td>
-                            <td class="p-3 text-right whitespace-nowrap space-x-1">
-                                <button onclick="saveEvalFeedback('${p.id}')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[11px]">저장</button>
-                                <button onclick="deletePost('${p.id}')" class="px-2.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-lg text-[11px]">삭제</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-            }
-
-            const qnaList = document.getElementById('teacher-qna-list');
-            if(qnaList) {
-                if(posts.length === 0) {
-                    qnaList.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">질문 및 과제 게시글이 없습니다.</p>`;
-                } else {
-                    qnaList.innerHTML = posts.map(p => `
-                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-xs text-indigo-700">${escapeHtml(p.author)} (${p.category || '실험보고서'})</span>
-                                <span class="text-[10px] text-slate-400">${p.date}</span>
-                            </div>
-                            <h4 class="font-bold text-xs text-slate-800">Q: ${escapeHtml(p.title)}</h4>
-                            <p class="text-xs text-slate-600 bg-white p-2.5 rounded-lg border">${escapeHtml(p.content)}</p>
-                            
-                            <div class="pt-2 space-y-1">
-                                <label class="block text-[11px] font-bold text-purple-700"><i class="fa-solid fa-comment-dots mr-1"></i>선생님 공식 답변 작성</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="tanswer-input-${p.id}" value="${escapeHtml(p.teacherAnswer || '')}" placeholder="학생 게시판에 강조 표시될 선생님 답변을 입력하세요" class="flex-grow p-2 text-xs border border-purple-200 rounded-lg outline-none focus:ring-2 focus:ring-purple-400">
-                                    <button onclick="saveTeacherAnswer('${p.id}')" class="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg text-xs whitespace-nowrap shadow transition">
-                                        답변 등록
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-        };
-
-        window.saveEvalFeedback = async function(id) {
-            const stampSel = document.getElementById(`stamp-sel-${id}`);
-            const fbInput = document.getElementById(`fb-input-${id}`);
-            
-            try {
-                const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', id);
-                await updateDoc(postRef, {
-                    stamp: stampSel ? stampSel.value : '',
-                    feedback: fbInput ? fbInput.value.trim() : ''
-                });
-                window.showToast("평가 도장 및 피드백이 DB에 저장되었습니다.");
-            } catch(err) {
-                console.error("Error updating eval:", err);
-                window.showToast("저장 중 오류가 발생했습니다.");
-            }
-        };
-
-        window.saveTeacherAnswer = async function(id) {
-            const input = document.getElementById(`tanswer-input-${id}`);
-            if(!input) return;
-
-            try {
-                const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', id);
-                await updateDoc(postRef, {
-                    teacherAnswer: input.value.trim()
-                });
-                window.showToast("선생님 답변이 DB에 저장되었습니다.");
-            } catch(err) {
-                console.error("Error updating answer:", err);
-                window.showToast("저장 중 오류가 발생했습니다.");
-            }
-        };
-
-        window.deletePost = async function(id) {
-            try {
-                const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', id);
-                await deleteDoc(postRef);
-                window.showToast("작성글이 DB에서 삭제되었습니다.");
-            } catch(err) {
-                console.error("Error deleting post:", err);
-                window.showToast("삭제 중 오류가 발생했습니다.");
-            }
-        };
-
-        window.addTeacherNotice = async function() {
-            const input = document.getElementById('teacher-notice-input');
-            const val = input.value.trim();
-            if(!val) return;
-
-            try {
-                const noticesCol = collection(db, 'artifacts', appId, 'public', 'data', 'notices');
-                await addDoc(noticesCol, {
-                    text: val,
-                    date: new Date().toLocaleDateString('ko-KR'),
-                    createdAt: Date.now()
-                });
-                input.value = '';
-                window.showToast("학급 공지사항이 DB에 등록되었습니다.");
-            } catch(err) {
-                console.error("Error adding notice:", err);
-                window.showToast("공지 등록 중 오류가 발생했습니다.");
-            }
-        };
-
-        window.exportToCSV = function() {
-            const posts = window.postsData || [];
-            if(posts.length === 0) {
-                window.showToast("내보낼 제출 데이터가 없습니다.");
-                return;
-            }
-
-            let csvContent = "\uFEFF";
-            csvContent += "ID,작성자,구분,제목,내용,제출일시,평가도장,서술피드백,선생님공식답변\n";
-
-            posts.forEach(p => {
-                const row = [
-                    p.id,
-                    `"${(p.author || '').replace(/"/g, '""')}"`,
-                    `"${(p.category || '').replace(/"/g, '""')}"`,
-                    `"${(p.title || '').replace(/"/g, '""')}"`,
-                    `"${(p.content || '').replace(/"/g, '""')}"`,
-                    `"${(p.date || '').replace(/"/g, '""')}"`,
-                    `"${(p.stamp || '').replace(/"/g, '""')}"`,
-                    `"${(p.feedback || '').replace(/"/g, '""')}"`,
-                    `"${(p.teacherAnswer || '').replace(/"/g, '""')}"`
-                ];
-                csvContent += row.join(",") + "\n";
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `과학_상태변화_탐구제출현황_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.showToast("CSV 파일이 성공적으로 다운로드되었습니다.");
-        };
-
-        function escapeHtml(str) {
-            return String(str || '')
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.onload = function() {
-            initCanvases();
-            window.selectPhenomenon('ice');
-            initAuthAndDb();
-            window.addEventListener('resize', resizePhenomCanvas);
-        };
+        function enterStudentMode() {
+            state.role = 'student';
+            updateRoleUI();
+            switchPage('home');
+        }
+
+        function openTeacherModal() {
+            document.getElementById('teacher-login-modal').classList.remove('hidden');
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('teacher-login-modal').classList.add('hidden');
+        }
+
+        function attemptTeacherLogin() {
+            const idInput = document.getElementById('teacher-id').value;
+            const pwInput = document.getElementById('teacher-pw').value;
+            const errEl = document.getElementById('login-error');
+
+            if (idInput === 'teacher' && pwInput === '1234') {
+                errEl.classList.add('hidden');
+                state.role = 'teacher';
+                updateRoleUI();
+                closeTeacherModal();
+                switchPage('teacher');
+            } else {
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        function logoutTeacher() {
+            state.role = 'student';
+            updateRoleUI();
+            switchPage('landing');
+        }
+
+        function updateRoleUI() {
+            const roleText = document.getElementById('role-text');
+            const badge = document.getElementById('role-badge');
+            if (state.role === 'teacher') {
+                roleText.innerText = '교사 대시보드 모드';
+                badge.className = 'hidden sm:flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200';
+            } else {
+                roleText.innerText = '학생 접속 모드';
+                badge.className = 'hidden sm:flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 border border-sky-200';
+            }
+        }
+
+        function setSimState(stateName) {
+            let targetTemp = -15;
+            if (stateName === 'solid') targetTemp = -25;
+            if (stateName === 'liquid') targetTemp = 50;
+            if (stateName === 'gas') targetTemp = 130;
+
+            document.getElementById('tempRange').value = targetTemp;
+            updateSimParameters(targetTemp);
+        }
+
+        function updateSimParameters(temp) {
+            state.simTemp = temp;
+            if (mainSim) mainSim.setTemperature(temp);
+            if (heroSim) heroSim.setTemperature(temp);
+
+            const tempDisplay = document.getElementById('temp-display');
+            const speedDisplay = document.getElementById('speed-display');
+            const stateBadge = document.getElementById('sim-state-badge');
+            const heroStateTag = document.getElementById('hero-state-tag');
+            const flowText = document.getElementById('thermal-flow-text');
+            const forceText = document.getElementById('particle-force-text');
+            const heatGlow = document.getElementById('heat-glow');
+            const principleDesc = document.getElementById('sim-principle-desc');
+
+            if (tempDisplay) tempDisplay.innerText = `${temp} °C`;
+
+            if (temp < 0) {
+                if (stateBadge) {
+                    stateBadge.innerText = '고체 (Solid State)';
+                    stateBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-sky-100 text-sky-700';
+                }
+                if (heroStateTag) heroStateTag.innerText = '고체 (Solid)';
+                if (speedDisplay) speedDisplay.innerText = '제자리 진동 (결합)';
+                if (flowText) flowText.innerText = '열에너지 적은 상태 (고체)';
+                if (forceText) forceText.innerText = '매우 강함 (결합선)';
+                if (heatGlow) heatGlow.style.opacity = '0';
+                if (principleDesc) principleDesc.innerText = '고체 상태에서는 열에너지가 적어 입자들이 규칙적인 격자를 이루며 제자리 진동을 합니다.';
+            } else if (temp <= 100) {
+                if (stateBadge) {
+                    stateBadge.innerText = '액체 (Liquid State)';
+                    stateBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-700';
+                }
+                if (heroStateTag) heroStateTag.innerText = '액체 (Liquid)';
+                if (speedDisplay) speedDisplay.innerText = '슬라이딩 유체 흐름';
+                if (flowText) flowText.innerText = '열에너지 흡수 중 (액체)';
+                if (forceText) forceText.innerText = '보통 (고체보다 약함)';
+                if (heatGlow) heatGlow.style.opacity = (temp / 150).toString();
+                if (principleDesc) principleDesc.innerText = '액체 상태에서는 열에너지를 받아 입자들이 결합을 풀고 서로의 위를 유연하게 슬라이딩하며 흐릅니다.';
+            } else {
+                if (stateBadge) {
+                    stateBadge.innerText = '기체 (Gas State)';
+                    stateBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-700';
+                }
+                if (heroStateTag) heroStateTag.innerText = '기체 (Gas)';
+                if (speedDisplay) speedDisplay.innerText = '사방 무작위 빠른 이동';
+                if (flowText) flowText.innerText = '다량의 열에너지 흡수 (기체)';
+                if (forceText) forceText.innerText = '거의 없음 (자유 확산)';
+                if (heatGlow) heatGlow.style.opacity = '0.6';
+                if (principleDesc) principleDesc.innerText = '기체 상태에서는 흡수한 높은 열에너지로 인해 입자 간 인력을 끊고 공간 전체로 빠르게 퍼져 나갑니다.';
+            }
+        }
+
+        // GUIDE TABS & SLIDER
+        function switchGuideTab(stepId) {
+            state.guideTab = stepId;
+            document.querySelectorAll('.guide-stage-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`content-${stepId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('bg-white', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById(`tab-${stepId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.remove('bg-white', 'text-slate-600');
+            }
+        }
+
+        function nextSlide() {
+            const items = document.querySelectorAll('.carousel-item');
+            items[state.currentSlide].classList.remove('active');
+            state.currentSlide = (state.currentSlide + 1) % items.length;
+            items[state.currentSlide].classList.add('active');
+        }
+
+        function prevSlide() {
+            const items = document.querySelectorAll('.carousel-item');
+            items[state.currentSlide].classList.remove('active');
+            state.currentSlide = (state.currentSlide - 1 + items.length) % items.length;
+            items[state.currentSlide].classList.add('active');
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            if (!container) return;
+
+            container.innerHTML = state.posts.map(post => `
+                <div class="lab-card rounded-2xl p-5 space-y-3">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="px-2.5 py-0.5 rounded-full font-bold bg-sky-100 text-sky-700">${post.type}</span>
+                        <span class="font-bold text-slate-500">${post.team} • ${post.author}</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-800">${post.title}</h4>
+                    <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/60">${post.content}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderTeacherDashboard() {
+            const tbody = document.getElementById('teacher-table-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = state.posts.map(post => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-semibold text-slate-700">${post.team}</td>
+                    <td class="p-3 font-bold text-slate-800">${post.author}</td>
+                    <td class="p-3 max-w-xs truncate">${post.title}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">${post.status}</span></td>
+                </tr>
+            `).join('');
+        }
     </script>
 </body>
 </html>
